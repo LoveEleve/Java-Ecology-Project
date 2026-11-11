@@ -27,6 +27,10 @@ class MultiDataSourceApiTests {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].owner").value("report-carol"));
 
+        mockMvc.perform(get("/api/dynamic/mp/report/accounts"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].owner").value("report-carol"));
+
         mockMvc.perform(get("/api/dynamic/accounts").param("source", "REPORT"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].owner").value("report-carol"));

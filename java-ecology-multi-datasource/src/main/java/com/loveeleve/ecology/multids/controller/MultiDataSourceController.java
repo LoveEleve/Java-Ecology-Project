@@ -43,6 +43,11 @@ public class MultiDataSourceController {
         return dynamicService.reportAccountsByAnnotation();
     }
 
+    @GetMapping("/dynamic/mp/report/accounts")
+    public List<Account> dynamicMyBatisPlusReport() {
+        return dynamicService.reportAccountsByMyBatisPlus();
+    }
+
     @GetMapping("/dynamic/accounts")
     public List<Account> dynamicByKey(@RequestParam DataSourceKey source) {
         return dynamicService.accountsByKey(source);

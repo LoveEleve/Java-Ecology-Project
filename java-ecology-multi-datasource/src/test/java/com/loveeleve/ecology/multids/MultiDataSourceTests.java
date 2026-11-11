@@ -3,6 +3,7 @@ package com.loveeleve.ecology.multids;
 import com.loveeleve.ecology.multids.config.DataSourceContextHolder;
 import com.loveeleve.ecology.multids.config.DataSourceKey;
 import com.loveeleve.ecology.multids.model.Account;
+import com.loveeleve.ecology.multids.service.ClassLevelReportAccountService;
 import com.loveeleve.ecology.multids.service.DynamicAccountService;
 import com.loveeleve.ecology.multids.service.StaticAccountService;
 import com.zaxxer.hikari.HikariDataSource;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 class MultiDataSourceTests {
@@ -22,6 +24,9 @@ class MultiDataSourceTests {
 
     @Autowired
     private DynamicAccountService dynamicService;
+
+    @Autowired
+    private ClassLevelReportAccountService classLevelReportService;
 
     @Autowired
     @Qualifier("masterDataSource")
@@ -67,10 +72,34 @@ class MultiDataSourceTests {
     }
 
     @Test
+    void myBatisPlusAndTransactionJoinTheRoutedDataSource() {
+        assertThat(dynamicService.reportAccountsByMyBatisPlus())
+                .extracting(Account::owner)
+                .containsExactly("report-carol", "report-dave", "report-eve");
+        assertThat(dynamicService.reportAccountsInTransaction())
+                .extracting(Account::owner)
+                .containsExactly("report-carol", "report-dave", "report-eve");
+    }
+
+    @Test
+    void classLevelAnnotationRoutesAllMethods() {
+        assertThat(classLevelReportService.accounts())
+                .extracting(Account::owner)
+                .containsExactly("report-carol", "report-dave", "report-eve");
+    }
+
+    @Test
     void programmaticRoutingClearsThreadLocalAfterCall() {
         assertThat(dynamicService.accountsByKey(DataSourceKey.REPORT))
                 .extracting(Account::owner)
                 .contains("report-carol");
+        assertThat(DataSourceContextHolder.get()).isNull();
+    }
+
+    @Test
+    void annotationRoutingClearsThreadLocalAfterException() {
+        assertThatThrownBy(() -> dynamicService.failAfterRouting())
+                .isInstanceOf(IllegalStateException.class);
         assertThat(DataSourceContextHolder.get()).isNull();
     }
 }

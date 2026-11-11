@@ -1,6 +1,6 @@
 # java-ecology-multi-datasource
 
-多数据源生产用法模块：静态多库 + 动态路由 + 注解切换 + 连接池隔离。示例用 `JdbcTemplate`，不绑定 ORM，突出“数据源路由”本身。
+多数据源生产用法模块：静态多库 + 动态路由 + 注解切换 + 连接池隔离。路由主体用 `JdbcTemplate` 展示，另外用 MyBatis-Plus 验证 ORM 可以接在 routing DataSource 上。
 
 ## 定位
 
@@ -22,6 +22,7 @@
 | JDK 17 | 编译与运行基线 |
 | Spring Boot 3.2.5 | Web、JDBC、AOP、Actuator |
 | HikariCP | 每个数据源一个独立连接池 |
+| MyBatis-Plus 3.5.7 | 动态路由 DataSource 上的 ORM 消费示例 |
 | H2 | 本地运行与测试，两个独立内存库 |
 | MySQL | `mysql` profile 使用，主库/报表库分开 |
 | `AbstractRoutingDataSource` | Spring 原生动态路由 |
@@ -39,9 +40,11 @@ java-ecology-multi-datasource
    │  │  ├─ config/          DataSourceKey、ContextHolder、RoutingDataSource、
    │  │  │                   @DataSource、Aspect、MultiDataSourceConfig
    │  │  ├─ controller/      MultiDataSourceController
+   │  │  ├─ entity/          AccountEntity（MP）
+   │  │  ├─ mapper/          AccountMapper（BaseMapper）
    │  │  ├─ model/           Account
    │  │  ├─ repository/      Master/Report/Dynamic AccountRepository
-   │  │  └─ service/         StaticAccountService、DynamicAccountService
+   │  │  └─ service/         StaticAccountService、DynamicAccountService、ClassLevelReportAccountService
    │  └─ resources
    │     ├─ application.yml
    │     ├─ application-dev.yml
@@ -72,7 +75,7 @@ public StaticAccountService(MasterAccountRepository masterRepository,
 - 业务库 + 日志/审计库
 - 不同业务域数据库
 
-如果是 MyBatis，需要为每个库建独立 `SqlSessionFactory` + `MapperScan(basePackages=..., sqlSessionFactoryRef=...)`，不能只换 `DataSource`。
+如果是 MyBatis/MyBatis-Plus 静态多库，需要为每个库建独立 `SqlSessionFactory`（MP 用 `MybatisSqlSessionFactoryBean`）+ `MapperScan(basePackages=..., sqlSessionFactoryRef=...)`，不能只换 `DataSource`。本模块动态示例已经验证 MP 消费 routing `DataSource` 的路径。
 
 ### 2. 动态路由
 
@@ -98,6 +101,17 @@ public List<Account> reportAccountsByAnnotation() {
 
 AOP 设置 `ThreadLocal`，`finally` 恢复/清理。`@Order(HIGHEST_PRECEDENCE)` 保证它在事务拦截器之前执行；否则事务可能已经从事务管理器拿到默认库连接。
 
+MyBatis-Plus 直接消费 `@Primary` 的 routing `DataSource`：
+
+```java
+@DataSource(DataSourceKey.REPORT)
+public List<Account> reportAccountsByMyBatisPlus() {
+    return accountMapper.selectList(null)...;
+}
+```
+
+`@DataSource + @Transactional` 的顺序由测试覆盖：路由先设置，事务再获取连接，因此事务内查询走报表库。
+
 ## 接口清单
 
 | 方法 | 路径 | 用途 |
@@ -106,6 +120,7 @@ AOP 设置 `ThreadLocal`，`finally` 恢复/清理。`@Order(HIGHEST_PRECEDENCE)
 | GET | `/api/static/report/accounts` | 静态报表库 |
 | GET | `/api/dynamic/master/accounts` | 注解路由到主库 |
 | GET | `/api/dynamic/report/accounts` | 注解路由到报表库 |
+| GET | `/api/dynamic/mp/report/accounts` | MyBatis-Plus 走路由 DataSource |
 | GET | `/api/dynamic/accounts?source=REPORT` | 编程式路由 |
 | GET | `/actuator/health` | 健康检查 |
 
@@ -188,6 +203,8 @@ curl -s http://localhost:8084/actuator/health
 - **每个库独立连接池**：`master` 和 `report` 的 `maximum-pool-size` 要分别算，不能共用一个上限；总连接数 = 各池之和。
 - **默认库要明确**：`setDefaultTargetDataSource(master)` 是兜底；未设置上下文时走主库，避免误写报表库。
 - **静态多数据源不是动态路由**：静态方式适合固定库；动态方式适合按租户/读请求/业务开关切换。两者可以共存，但不要让路由规则散落在 Controller。
+- **MP 支持多数据源，但不等于自带动态路由**：MP 能消费任意 `DataSource`；动态切库仍由路由层（`AbstractRoutingDataSource` 或 `dynamic-datasource`）完成。静态多库用多个 `SqlSessionFactory`，动态多库让 MP 使用 routing `DataSource`。
+- **自调用不触发 AOP**：同一个 Service 内 `this.reportMethod()` 不会经过代理，`@DataSource` 不生效；要拆到另一个 Bean 或显式设置上下文。
 - **生产不要用 `CommandLineRunner` 建表**：本模块只为 H2 演示；真实环境用 Flyway/Liquibase，并让 DBA 审核 DDL。
 
 ## 参考

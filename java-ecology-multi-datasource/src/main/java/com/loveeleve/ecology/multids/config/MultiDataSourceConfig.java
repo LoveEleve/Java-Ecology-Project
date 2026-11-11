@@ -11,12 +11,14 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
+import org.mybatis.spring.annotation.MapperScan;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
 
 @Configuration(proxyBeanMethods = false)
+@MapperScan("com.loveeleve.ecology.multids.mapper")
 public class MultiDataSourceConfig {
 
     @Bean
