@@ -23,6 +23,8 @@
         <module>java-ecology-spring-boot-web</module>
         <module>java-ecology-mybatis</module>
         <module>java-ecology-druid</module>
+        <module>java-ecology-mybatis-plus</module>
+        <module>java-ecology-multi-datasource</module>
     </modules>
 
     <properties>
@@ -34,6 +36,7 @@
         <maven-enforcer-plugin.version>3.4.1</maven-enforcer-plugin.version>
         <mybatis-spring-boot.version>3.0.5</mybatis-spring-boot.version>
         <druid.version>1.2.28</druid.version>
+        <mybatis-plus.version>3.5.7</mybatis-plus.version>
     </properties>
 
     <dependencyManagement>
@@ -57,6 +60,11 @@
                 <groupId>com.alibaba</groupId>
                 <artifactId>druid-spring-boot-3-starter</artifactId>
                 <version>${druid.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+                <version>${mybatis-plus.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

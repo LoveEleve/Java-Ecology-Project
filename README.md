@@ -29,7 +29,9 @@ Java 生态的生产级使用案例集合，基于 Spring Boot 构建。目标�
 | `java-ecology-spring-boot-web` | Spring Boot + Spring MVC + 内嵌 Tomcat：REST、校验、异常、拦截器、Filter、异步、上传下载、Actuator、生产配置 | ✅ |
 | `java-ecology-mybatis` | MyBatis：XML/注解 Mapper、动态 SQL、TypeHandler、批量、事务、分页、慢 SQL、HikariCP | ✅ |
 | `java-ecology-druid` | Druid：连接池、StatView、WebStat、WallFilter、慢 SQL、池状态 | ✅ |
-| 后续模块 | MyBatis-Plus、Redis、Nacos、Dubbo、Kafka、Sentinel、Seata、ShardingSphere、可观测性等 | ⏳ |
+| `java-ecology-mybatis-plus` | MyBatis-Plus：BaseMapper/IService、Lambda Wrapper、分页、乐观锁、逻辑删除、自动填充 | ✅ |
+| `java-ecology-multi-datasource` | 多数据源：静态多库、`AbstractRoutingDataSource`、`@DataSource` AOP、连接池隔离 | ✅ |
+| 后续模块 | Redis、Nacos、Dubbo、Kafka、Sentinel、Seata、ShardingSphere、可观测性等 | ⏳ |
 
 ## 构建与运行
 
@@ -68,4 +70,4 @@ java -jar java-ecology-spring-boot-web/target/java-ecology-spring-boot-web.jar -
 
 ## 说明
 
-当前已完成基础 Web、数据访问和连接池模块，后续按“ORM 增强（MyBatis-Plus）→ 缓存 → 注册/RPC/网关 → 消息 → 稳定性 → 可观测性 → 传输”的顺序逐步补充。
+当前已完成基础 Web、数据访问、连接池、ORM 增强和多数据源模块，后续按“缓存 → 注册/RPC/网关 → 消息 → 稳定性 → 可观测性 → 传输”的顺序逐步补充。

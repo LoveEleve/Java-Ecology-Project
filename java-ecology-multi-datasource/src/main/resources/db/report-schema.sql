@@ -1,0 +1,7 @@
+DROP TABLE IF EXISTS account;
+
+CREATE TABLE account (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    owner VARCHAR(64) NOT NULL,
+    balance BIGINT NOT NULL
+);

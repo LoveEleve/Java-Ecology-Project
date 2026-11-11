@@ -1,0 +1,39 @@
+spring:
+  sql:
+    init:
+      mode: never
+
+app:
+  datasource:
+    master:
+      url: jdbc:mysql://${MYSQL_MASTER_HOST:127.0.0.1}:${MYSQL_MASTER_PORT:3306}/${MYSQL_MASTER_DATABASE:ecology_master}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      username: ${MYSQL_MASTER_USER:ecology}
+      password: ${MYSQL_MASTER_PASSWORD:ecology}
+      hikari:
+        pool-name: multi-master-pool
+        maximum-pool-size: ${DB_MASTER_POOL_MAX_SIZE:10}
+        minimum-idle: 2
+        connection-timeout: 3000
+        validation-timeout: 1000
+        idle-timeout: 600000
+        max-lifetime: 1800000
+        keepalive-time: 60000
+        leak-detection-threshold: 20000
+        initialization-fail-timeout: 1
+    report:
+      url: jdbc:mysql://${MYSQL_REPORT_HOST:127.0.0.1}:${MYSQL_REPORT_PORT:3306}/${MYSQL_REPORT_DATABASE:ecology_report}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      username: ${MYSQL_REPORT_USER:ecology}
+      password: ${MYSQL_REPORT_PASSWORD:ecology}
+      hikari:
+        pool-name: multi-report-pool
+        maximum-pool-size: ${DB_REPORT_POOL_MAX_SIZE:10}
+        minimum-idle: 2
+        connection-timeout: 3000
+        validation-timeout: 1000
+        idle-timeout: 600000
+        max-lifetime: 1800000
+        keepalive-time: 60000
+        leak-detection-threshold: 20000
+        initialization-fail-timeout: 1

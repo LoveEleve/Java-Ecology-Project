@@ -1,0 +1,56 @@
+spring:
+  application:
+    name: java-ecology-multi-datasource
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
+  sql:
+    init:
+      mode: never
+
+server:
+  port: 8084
+  shutdown: graceful
+
+app:
+  datasource:
+    master:
+      url: jdbc:h2:mem:multi-master;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE
+      driver-class-name: org.h2.Driver
+      username: sa
+      password:
+      hikari:
+        pool-name: multi-master-pool
+        maximum-pool-size: 10
+        minimum-idle: 2
+        connection-timeout: 3000
+        validation-timeout: 1000
+        idle-timeout: 600000
+        max-lifetime: 1800000
+        keepalive-time: 60000
+        leak-detection-threshold: 20000
+        initialization-fail-timeout: 1
+    report:
+      url: jdbc:h2:mem:multi-report;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE
+      driver-class-name: org.h2.Driver
+      username: sa
+      password:
+      hikari:
+        pool-name: multi-report-pool
+        maximum-pool-size: 10
+        minimum-idle: 2
+        connection-timeout: 3000
+        validation-timeout: 1000
+        idle-timeout: 600000
+        max-lifetime: 1800000
+        keepalive-time: 60000
+        leak-detection-threshold: 20000
+        initialization-fail-timeout: 1
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: never
