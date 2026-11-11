@@ -25,6 +25,7 @@ Java 生态的生产级使用案例集合，基于 Spring Boot 构建。目标�
 
 | 模块 | 说明 | 状态 |
 |---|---|---|
+| `java-ecology-spring-boot-extension` | Spring Boot 扩展点：自动配置、条件、EnvironmentPostProcessor、RunListener、FailureAnalyzer、Import、BFPP/BPP、Actuator、配置绑定 | ✅ |
 | `java-ecology-spring-boot-web` | Spring Boot + Spring MVC + 内嵌 Tomcat：REST、校验、异常、拦截器、Filter、异步、上传下载、Actuator、生产配置 | ✅ |
 | 后续模块 | Nacos、Dubbo、Redis、Kafka、Sentinel、Seata、ShardingSphere、可观测性等 | ⏳ |
 

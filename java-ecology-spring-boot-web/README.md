@@ -23,7 +23,7 @@ Spring Boot + Spring MVC + 内嵌 Tomcat 的生产用法基础模块。后续大
 | Spring MVC | REST、参数/返回值、异常、拦截器 |
 | Tomcat | 内嵌容器，`spring-boot-starter-web` 自带，无额外依赖 |
 | Bean Validation | Jakarta Validation |
-| Actuator | health/info/metrics |
+| Actuator | health/info/metrics；dev 额外暴露 ecology |
 | Logback | 控制台 + 滚动文件 + requestId |
 
 ## 目录结构
@@ -86,6 +86,7 @@ java-ecology-spring-boot-web
 | GET | `/actuator/health` | 健康检查 |
 | GET | `/actuator/info` | 应用信息 |
 | GET | `/actuator/metrics` | 指标索引 |
+| GET | `/actuator/ecology` | 扩展模块自定义端点（dev 暴露） |
 | GET | `/error` | 自定义错误响应 |
 
 ## 配置说明
@@ -122,7 +123,7 @@ java-ecology-spring-boot-web
 | `spring.mvc.problemdetails.enabled` | `true` | 支持 ProblemDetail |
 | `spring.servlet.multipart.max-file-size` | `10MB` | 单文件上限 |
 | `spring.servlet.multipart.max-request-size` | `20MB` | 单请求上限 |
-| `management.endpoints.web.exposure.include` | `health,info,metrics` | 暴露端点 |
+| `management.endpoints.web.exposure.include` | dev `health,info,metrics,ecology` / 默认 `health,info,metrics` | 暴露端点 |
 | `management.endpoint.health.show-details` | dev `always` / prod `never` | 健康细节 |
 | `app.demo.request-id-header` | `X-Request-Id` | 请求 ID 头 |
 | `app.demo.cors-allowed-origins` | `http://localhost:3000` | CORS 白名单 |
@@ -181,6 +182,10 @@ curl -s -F "file=@README.md" http://localhost:8080/api/files
 - **CORS 白名单**：按环境配置，不要生产使用 `*` 且同时允许凭证。
 - **上传目录**：生产应使用独立挂载盘/对象存储，限制大小与类型，校验文件名，禁止路径穿越。
 - **access log**：生产开启 Tomcat access log，按天滚动；应用日志用 Logback 滚动文件，避免只依赖控制台。
+
+## 依赖的扩展模块
+
+本模块依赖 `java-ecology-spring-boot-extension`，用于演示自动配置、条件、启动监听、FailureAnalyzer、Import、BFPP/BPP 和自定义 Actuator 端点如何被真实应用装配。扩展模块本身不写业务，Web 模块只作为运行示例。
 
 ## 参考
 

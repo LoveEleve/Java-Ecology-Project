@@ -1,0 +1,14 @@
+org.springframework.boot.env.EnvironmentPostProcessor=\
+com.loveeleve.ecology.extension.env.EcologyEnvironmentPostProcessor
+
+org.springframework.context.ApplicationContextInitializer=\
+com.loveeleve.ecology.extension.lifecycle.EcologyApplicationContextInitializer
+
+org.springframework.boot.SpringApplicationRunListener=\
+com.loveeleve.ecology.extension.lifecycle.EcologyRunListener
+
+org.springframework.boot.diagnostics.FailureAnalyzer=\
+com.loveeleve.ecology.extension.failure.EcologyFailureAnalyzer
+
+org.springframework.boot.autoconfigure.AutoConfigurationImportFilter=\
+com.loveeleve.ecology.extension.autoconfigure.EcologyAutoConfigurationImportFilter

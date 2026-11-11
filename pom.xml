@@ -19,6 +19,7 @@
     <description>Production-oriented usage examples for the Java ecosystem, built on Spring Boot.</description>
 
     <modules>
+        <module>java-ecology-spring-boot-extension</module>
         <module>java-ecology-spring-boot-web</module>
     </modules>
 
@@ -33,6 +34,11 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>java-ecology-spring-boot-extension</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>java-ecology-spring-boot-web</artifactId>
