@@ -1,0 +1,30 @@
+spring:
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:127.0.0.1}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:ecology}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${MYSQL_USER:ecology}
+    password: ${MYSQL_PASSWORD:ecology}
+    druid:
+      filters: stat,wall,slf4j
+      filter:
+        stat:
+          db-type: mysql
+        wall:
+          enabled: true
+          db-type: mysql
+          throw-exception: true
+          log-violation: true
+          config:
+            multi-statement-allow: false
+            none-base-statement-allow: false
+            delete-allow: true
+            update-allow: true
+            insert-allow: true
+            select-allow: true
+            drop-table-allow: false
+            alter-table-allow: false
+            truncate-allow: false
+            create-table-allow: false
+  sql:
+    init:
+      mode: never

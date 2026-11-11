@@ -1,0 +1,74 @@
+spring:
+  application:
+    name: java-ecology-druid
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
+  datasource:
+    url: jdbc:h2:mem:ecology-druid;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+    druid:
+      name: ecology-druid-pool
+      initial-size: ${DRUID_INITIAL_SIZE:5}
+      min-idle: ${DRUID_MIN_IDLE:5}
+      max-active: ${DRUID_MAX_ACTIVE:20}
+      max-wait: ${DRUID_MAX_WAIT_MS:3000}
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      max-evictable-idle-time-millis: 900000
+      validation-query: SELECT 1
+      validation-query-timeout: 1
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      keep-alive: true
+      keep-alive-between-time-millis: 120000
+      phy-timeout-millis: 1800000
+      remove-abandoned: false
+      remove-abandoned-timeout-millis: 300000
+      log-abandoned: false
+      pool-prepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 20
+      share-prepared-statements: false
+      use-global-data-source-stat: true
+      connection-error-retry-attempts: 3
+      time-between-connect-error-millis: 1000
+      break-after-acquire-failure: false
+      filters: stat,slf4j
+      filter:
+        stat:
+          enabled: true
+          slow-sql-millis: 200
+          log-slow-sql: true
+          merge-sql: true
+        slf4j:
+          enabled: true
+      stat-view-servlet:
+        enabled: false
+        url-pattern: /druid/*
+        login-username: ${DRUID_STAT_USER:admin}
+        login-password: ${DRUID_STAT_PASSWORD:change-me}
+        reset-enable: false
+      web-stat-filter:
+        enabled: true
+        url-pattern: /*
+        exclusions: '*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*'
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db/schema-h2.sql
+      data-locations: classpath:db/data-h2.sql
+
+server:
+  port: 8082
+  shutdown: graceful
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: never

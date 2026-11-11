@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.loveeleve.ecology.mybatis.mapper.UserMapper">
+
+    <resultMap id="UserResultMap" type="com.loveeleve.ecology.mybatis.entity.User">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="email" property="email"/>
+        <result column="status" property="status"
+                typeHandler="com.loveeleve.ecology.mybatis.typehandler.UserStatusTypeHandler"/>
+        <result column="age" property="age"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <sql id="BaseColumns">
+        id, username, email, status, age, created_at, updated_at
+    </sql>
+
+    <sql id="QueryWhere">
+        <where>
+            <if test="query.username != null and query.username != ''">
+                AND username LIKE CONCAT('%', #{query.username}, '%')
+            </if>
+            <if test="query.email != null and query.email != ''">
+                AND email LIKE CONCAT('%', #{query.email}, '%')
+            </if>
+            <if test="query.status != null">
+                AND status = #{query.status, typeHandler=com.loveeleve.ecology.mybatis.typehandler.UserStatusTypeHandler}
+            </if>
+            <if test="query.minAge != null">
+                AND age &gt;= #{query.minAge}
+            </if>
+            <if test="query.maxAge != null">
+                AND age &lt;= #{query.maxAge}
+            </if>
+        </where>
+    </sql>
+
+    <select id="selectById" resultMap="UserResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM ecology_user
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectByQuery" resultMap="UserResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM ecology_user
+        <include refid="QueryWhere"/>
+        ORDER BY id
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countByQuery" resultType="long">
+        SELECT COUNT(*)
+        FROM ecology_user
+        <include refid="QueryWhere"/>
+    </select>
+
+    <select id="selectByStatus" resultMap="UserResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM ecology_user
+        WHERE status = #{status, typeHandler=com.loveeleve.ecology.mybatis.typehandler.UserStatusTypeHandler}
+        ORDER BY id
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        INSERT INTO ecology_user (username, email, status, age, created_at, updated_at)
+        VALUES (#{username}, #{email},
+                #{status, typeHandler=com.loveeleve.ecology.mybatis.typehandler.UserStatusTypeHandler},
+                #{age}, #{createdAt}, #{updatedAt})
+    </insert>
+
+    <insert id="insertBatch">
+        INSERT INTO ecology_user (username, email, status, age, created_at, updated_at)
+        VALUES
+        <foreach collection="users" item="user" separator=",">
+            (#{user.username}, #{user.email},
+             #{user.status, typeHandler=com.loveeleve.ecology.mybatis.typehandler.UserStatusTypeHandler},
+             #{user.age}, #{user.createdAt}, #{user.updatedAt})
+        </foreach>
+    </insert>
+
+    <update id="update">
+        UPDATE ecology_user
+        <set>
+            <if test="username != null and username != ''">username = #{username},</if>
+            <if test="email != null and email != ''">email = #{email},</if>
+            <if test="age != null">age = #{age},</if>
+            updated_at = #{updatedAt}
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM ecology_user WHERE id = #{id}
+    </delete>
+</mapper>

@@ -1,0 +1,58 @@
+spring:
+  application:
+    name: java-ecology-mybatis
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
+  datasource:
+    url: jdbc:h2:mem:ecology;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+    hikari:
+      pool-name: ecology-mybatis-pool
+      maximum-pool-size: ${DB_POOL_MAX_SIZE:20}
+      minimum-idle: ${DB_POOL_MIN_IDLE:5}
+      connection-timeout: ${DB_POOL_CONNECTION_TIMEOUT_MS:3000}
+      validation-timeout: ${DB_POOL_VALIDATION_TIMEOUT_MS:1000}
+      idle-timeout: ${DB_POOL_IDLE_TIMEOUT_MS:600000}
+      max-lifetime: ${DB_POOL_MAX_LIFETIME_MS:1800000}
+      keepalive-time: ${DB_POOL_KEEPALIVE_TIME_MS:60000}
+      leak-detection-threshold: ${DB_POOL_LEAK_DETECTION_THRESHOLD_MS:20000}
+      initialization-fail-timeout: ${DB_POOL_INITIALIZATION_FAIL_TIMEOUT_MS:1}
+      transaction-isolation: ${DB_POOL_TRANSACTION_ISOLATION:TRANSACTION_READ_COMMITTED}
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db/schema-h2.sql
+      data-locations: classpath:db/data-h2.sql
+
+server:
+  port: 8081
+  shutdown: graceful
+
+mybatis:
+  mapper-locations: classpath*:mapper/**/*.xml
+  type-aliases-package: com.loveeleve.ecology.mybatis.entity
+  type-handlers-package: com.loveeleve.ecology.mybatis.typehandler
+  configuration:
+    map-underscore-to-camel-case: true
+    default-fetch-size: 100
+    default-statement-timeout: 3
+    local-cache-scope: statement
+    cache-enabled: false
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: never
+
+app:
+  mybatis:
+    slow-sql:
+      enabled: true
+      threshold-ms: 200

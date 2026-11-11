@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    druid:
+      stat-view-servlet:
+        enabled: true
+
+logging:
+  level:
+    com.alibaba.druid: debug
+
+management:
+  endpoint:
+    health:
+      show-details: always
