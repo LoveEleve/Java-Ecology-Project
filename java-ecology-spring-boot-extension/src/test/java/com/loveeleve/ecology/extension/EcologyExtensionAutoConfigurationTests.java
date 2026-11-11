@@ -12,6 +12,7 @@ import com.loveeleve.ecology.extension.processor.EcologyBeanPostProcessor;
 import com.loveeleve.ecology.extension.processor.EcologyRegistryMarker;
 import com.loveeleve.ecology.extension.properties.EcologyExtensionProperties;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 
@@ -35,6 +36,7 @@ class EcologyExtensionAutoConfigurationTests {
             assertThat(context).hasSingleBean(EcologyHealthIndicator.class);
             assertThat(context).hasSingleBean(EcologyInfoContributor.class);
             assertThat(context).hasSingleBean(EcologyBindHandlerAdvisor.class);
+            assertThat(context).hasSingleBean(ApplicationRunner.class);
             assertThat(context).hasSingleBean(EcologyExtensionProperties.class);
             assertThat(context.getBean(EcologyExtensionProperties.class).getMessage()).isNotBlank();
         });

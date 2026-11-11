@@ -13,6 +13,7 @@ import com.loveeleve.ecology.extension.lifecycle.EcologySmartLifecycle;
 import com.loveeleve.ecology.extension.processor.EcologyBeanDefinitionRegistryPostProcessor;
 import com.loveeleve.ecology.extension.processor.EcologyBeanPostProcessor;
 import com.loveeleve.ecology.extension.properties.EcologyExtensionProperties;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.actuate.info.InfoContributor;
@@ -56,6 +57,13 @@ public class EcologyExtensionAutoConfiguration {
     @ConditionalOnMissingBean
     public EcologyReadyListener ecologyReadyListener(EcologyExtensionProperties properties) {
         return new EcologyReadyListener(properties);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "ecologyApplicationRunner")
+    public ApplicationRunner ecologyApplicationRunner(EcologyExtensionProperties properties) {
+        return args -> org.slf4j.LoggerFactory.getLogger(EcologyExtensionAutoConfiguration.class)
+                .info("ecology extension ApplicationRunner: {}", properties.getMessage());
     }
 
     @Bean
