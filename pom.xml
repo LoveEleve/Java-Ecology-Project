@@ -25,6 +25,7 @@
         <module>java-ecology-druid</module>
         <module>java-ecology-mybatis-plus</module>
         <module>java-ecology-multi-datasource</module>
+        <module>java-ecology-poly</module>
     </modules>
 
     <properties>
