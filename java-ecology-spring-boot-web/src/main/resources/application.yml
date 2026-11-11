@@ -1,0 +1,86 @@
+spring:
+  application:
+    name: java-ecology-spring-boot-web
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
+  mvc:
+    problemdetails:
+      enabled: false
+  task:
+    scheduling:
+      pool:
+        size: 4
+      thread-name-prefix: demo-scheduling-
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 20MB
+  web:
+    resources:
+      cache:
+        cachecontrol:
+          max-age: 3600s
+
+server:
+  port: 8080
+  shutdown: graceful
+  forward-headers-strategy: framework
+  max-http-request-header-size: 16KB
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/plain
+    min-response-size: 1024
+  error:
+    include-message: never
+    include-binding-errors: never
+    include-stacktrace: never
+    whitelabel:
+      enabled: false
+  tomcat:
+    basedir: ${TOMCAT_BASEDIR:.}
+    threads:
+      max: 200
+      min-spare: 20
+    max-connections: 8192
+    accept-count: 100
+    connection-timeout: 5s
+    keep-alive-timeout: 15s
+    max-keep-alive-requests: 100
+    max-http-form-post-size: 2MB
+    max-swallow-size: 2MB
+    uri-encoding: UTF-8
+    background-processor-delay: 10s
+    accesslog:
+      enabled: false
+      directory: logs
+      prefix: access
+      suffix: .log
+      file-date-format: yyyy-MM-dd
+      pattern: '%h %l %u %t "%r" %s %b %D'
+      rotate: true
+      max-days: 7
+      buffered: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: never
+  info:
+    env:
+      enabled: true
+
+app:
+  demo:
+    name: Java Ecology
+    request-id-header: X-Request-Id
+    cors-allowed-origins:
+      - http://localhost:3000
+    upload-dir: ${java.io.tmpdir}/java-ecology-uploads
+    async-core-pool-size: 4
+    async-max-pool-size: 16
+    async-queue-capacity: 200
+    schedule-delay-ms: 3600000

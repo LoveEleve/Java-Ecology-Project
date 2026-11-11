@@ -1,0 +1,17 @@
+server:
+  tomcat:
+    accesslog:
+      enabled: false
+  error:
+    include-message: always
+    include-binding-errors: always
+
+management:
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    root: INFO
+    com.loveeleve.ecology.web: DEBUG

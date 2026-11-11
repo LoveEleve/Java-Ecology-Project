@@ -22,3 +22,7 @@ out/
 application-local.yml
 application-local.yaml
 .env
+
+# Runtime
+logs/
+work/
