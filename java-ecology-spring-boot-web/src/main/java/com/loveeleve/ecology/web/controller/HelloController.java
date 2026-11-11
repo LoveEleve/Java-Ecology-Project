@@ -1,6 +1,7 @@
 package com.loveeleve.ecology.web.controller;
 
 import com.loveeleve.ecology.web.common.ApiResponse;
+import com.loveeleve.ecology.web.annotation.RequestId;
 import com.loveeleve.ecology.web.common.RequestIds;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,6 +35,11 @@ public class HelloController {
     @GetMapping("/{name}")
     public ApiResponse<String> helloPath(@PathVariable String name) {
         return ApiResponse.ok("hello " + name);
+    }
+
+    @GetMapping("/request-id")
+    public ApiResponse<String> requestId(@RequestId String requestId) {
+        return ApiResponse.ok(requestId);
     }
 
     @PostMapping("/echo")

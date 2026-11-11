@@ -6,6 +6,7 @@ import com.loveeleve.ecology.extension.actuator.EcologyHealthIndicator;
 import com.loveeleve.ecology.extension.actuator.EcologyInfoContributor;
 import com.loveeleve.ecology.extension.bind.EcologyBindHandlerAdvisor;
 import com.loveeleve.ecology.extension.condition.ConditionalOnEcologyEnabled;
+import com.loveeleve.ecology.extension.imports.EcologyDeferredImportSelector;
 import com.loveeleve.ecology.extension.imports.EcologyImportBeanDefinitionRegistrar;
 import com.loveeleve.ecology.extension.imports.EcologyImportSelector;
 import com.loveeleve.ecology.extension.lifecycle.EcologyReadyListener;
@@ -28,7 +29,7 @@ import org.springframework.context.annotation.Import;
 @AutoConfiguration
 @ConditionalOnEcologyEnabled
 @EnableConfigurationProperties(EcologyExtensionProperties.class)
-@Import({EcologyImportSelector.class, EcologyImportBeanDefinitionRegistrar.class})
+@Import({EcologyImportSelector.class, EcologyDeferredImportSelector.class, EcologyImportBeanDefinitionRegistrar.class})
 public class EcologyExtensionAutoConfiguration {
 
     @Bean

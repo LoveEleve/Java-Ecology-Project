@@ -18,23 +18,28 @@ public class EcologyRunListener implements SpringApplicationRunListener {
     }
 
     @Override
-    public void starting(ConfigurableBootstrapContext bootstrapContext) {
-        log.info("ecology extension run listener: starting");
-    }
-
-    @Override
     public void environmentPrepared(ConfigurableBootstrapContext bootstrapContext,
                                     ConfigurableEnvironment environment) {
-        log.debug("ecology extension run listener: environment prepared");
+        if (enabled(environment)) {
+            log.debug("ecology extension run listener: environment prepared");
+        }
     }
 
     @Override
     public void started(ConfigurableApplicationContext context, Duration timeTaken) {
-        log.info("ecology extension run listener: started in {} ms", timeTaken.toMillis());
+        if (enabled(context.getEnvironment())) {
+            log.info("ecology extension run listener: started in {} ms", timeTaken.toMillis());
+        }
     }
 
     @Override
     public void failed(ConfigurableApplicationContext context, Throwable exception) {
-        log.error("ecology extension run listener: failed", exception);
+        if (context == null || enabled(context.getEnvironment())) {
+            log.error("ecology extension run listener: failed", exception);
+        }
+    }
+
+    private boolean enabled(ConfigurableEnvironment environment) {
+        return environment.getProperty("ecology.extension.enabled", Boolean.class, true);
     }
 }

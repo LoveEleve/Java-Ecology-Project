@@ -12,3 +12,6 @@ com.loveeleve.ecology.extension.failure.EcologyFailureAnalyzer
 
 org.springframework.boot.autoconfigure.AutoConfigurationImportFilter=\
 com.loveeleve.ecology.extension.autoconfigure.EcologyAutoConfigurationImportFilter
+
+org.springframework.boot.autoconfigure.AutoConfigurationImportListener=\
+com.loveeleve.ecology.extension.autoconfigure.EcologyAutoConfigurationImportListener

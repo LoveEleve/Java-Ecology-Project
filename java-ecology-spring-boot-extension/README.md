@@ -13,15 +13,17 @@ Spring Boot 扩展点示例库。它不是业务 starter，而是演示“一个
 | 环境后处理 | `EcologyEnvironmentPostProcessor` + `ecology-defaults.properties` |
 | 容器初始化 | `EcologyApplicationContextInitializer` |
 | 启动监听 | `EcologyRunListener` |
+| 启动 Runner | `ApplicationRunner` |
 | 失败诊断 | `EcologyFailureAnalyzer` |
 | BeanDefinition 注册 | `EcologyBeanDefinitionRegistryPostProcessor` |
 | Bean 生命周期 | `EcologyBeanPostProcessor` |
-| 模块导入 | `EcologyImportSelector` / `EcologyImportBeanDefinitionRegistrar` |
+| 模块导入 | `EcologyImportSelector` / `EcologyDeferredImportSelector` / `EcologyImportBeanDefinitionRegistrar` |
 | 生命周期 | `EcologySmartLifecycle` |
 | 应用事件 | `EcologyReadyListener` |
 | Actuator | `EcologyEndpoint` / `EcologyHealthIndicator` / `EcologyInfoContributor` |
 | 配置绑定 | `EcologyBindHandlerAdvisor` |
 | 自动配置过滤 | `EcologyAutoConfigurationImportFilter` |
+| 自动配置导入监听 | `EcologyAutoConfigurationImportListener` |
 
 ## 目录
 

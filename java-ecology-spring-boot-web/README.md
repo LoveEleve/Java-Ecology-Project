@@ -73,6 +73,7 @@ java-ecology-spring-boot-web
 |---|---|---|
 | GET | `/api/hello?name=test` | 查询参数、请求头、统一响应 |
 | GET | `/api/hello/{name}` | 路径参数 |
+| GET | `/api/hello/request-id` | 自定义参数解析器注入 requestId |
 | POST | `/api/hello/echo` | JSON 请求体回显 |
 | POST | `/api/users` | 创建用户 + 参数校验 |
 | GET | `/api/users?page=1&size=20` | 分页列表 |

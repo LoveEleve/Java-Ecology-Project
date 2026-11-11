@@ -12,6 +12,10 @@ public class EcologyApplicationContextInitializer
 
     @Override
     public void initialize(ConfigurableApplicationContext applicationContext) {
-        log.info("ecology extension initializer: applicationContext={}", applicationContext.getId());
+        boolean enabled = applicationContext.getEnvironment()
+                .getProperty("ecology.extension.enabled", Boolean.class, true);
+        if (enabled) {
+            log.info("ecology extension initializer: applicationContext={}", applicationContext.getId());
+        }
     }
 }

@@ -37,6 +37,14 @@ class WebApplicationTests {
     }
 
     @Test
+    void customArgumentResolverInjectsRequestId() {
+        ResponseEntity<String> response = restTemplate.getForEntity("/api/hello/request-id", String.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).contains("requestId");
+    }
+
+    @Test
     void validationFailureReturnsBadRequest() {
         ResponseEntity<String> response = restTemplate.postForEntity(
                 "/api/users",

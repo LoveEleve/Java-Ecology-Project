@@ -5,6 +5,7 @@ import com.loveeleve.ecology.extension.actuator.EcologyHealthIndicator;
 import com.loveeleve.ecology.extension.actuator.EcologyInfoContributor;
 import com.loveeleve.ecology.extension.autoconfigure.EcologyExtensionAutoConfiguration;
 import com.loveeleve.ecology.extension.bind.EcologyBindHandlerAdvisor;
+import com.loveeleve.ecology.extension.imports.EcologyDeferredImportedMarker;
 import com.loveeleve.ecology.extension.imports.EcologyImportedMarker;
 import com.loveeleve.ecology.extension.imports.EcologyRegistrarMarker;
 import com.loveeleve.ecology.extension.lifecycle.EcologySmartLifecycle;
@@ -28,6 +29,7 @@ class EcologyExtensionAutoConfigurationTests {
         contextRunner.run(context -> {
             assertThat(context).hasSingleBean(EcologyMarker.class);
             assertThat(context).hasSingleBean(EcologyImportedMarker.class);
+            assertThat(context).hasSingleBean(EcologyDeferredImportedMarker.class);
             assertThat(context).hasSingleBean(EcologyRegistrarMarker.class);
             assertThat(context).hasSingleBean(EcologyRegistryMarker.class);
             assertThat(context).hasSingleBean(EcologyBeanPostProcessor.class);
