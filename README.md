@@ -48,6 +48,7 @@ Java 生态的生产级使用案例集合，基于 Spring Boot 构建。目标�
 | `java-ecology-seata` | Seata AT：Order/Account/Storage 三服务、全局事务、XID 透传、幂等、undo_log、Nacos 集群配置 | ✅ |
 | `java-ecology-observability` | 可观测性：Micrometer/Prometheus、OpenTelemetry Tracing、TraceId 日志、Health/Info | ✅ |
 | `java-ecology-netty` | Netty：TCP Server/Client、长度字段拆包、心跳、背压、重连、优雅停机 | ✅ |
+| `java-ecology-grpc` | gRPC：Proto、Unary/三种流、deadline、metadata、retry、health、reflection | ✅ |
 | 后续模块 | 传输扩展等 | ⏳ |
 
 ## 构建与运行
@@ -116,6 +117,7 @@ java -jar java-ecology-spring-boot-web/target/java-ecology-spring-boot-web.jar -
 | Seata AT 全局事务/三服务/幂等/undo_log | ✅ | ✅ 26 个单测/上下文（无 TC/Nacos/MySQL） | 未接真实 TC/MySQL |
 | Observability 指标/Tracing/Health | ✅ | ✅ 4 个测试（无 Collector/Prometheus） | 未接真实监控后端 |
 | Netty TCP 拆包/编解码/Handler/重连 | ✅ | ✅ 12 个测试（含 loopback） | 未做 TLS/压测 |
+| gRPC Unary/流式/Deadline/Metadata | ✅ | ✅ 9 个测试（in-process + 本机端口） | 未做 TLS/LB/压测 |
 | Nacos 集群/鉴权 | ⚠️ 配置支持 | ❌ | 仅 standalone 手工验证 |
 | Druid 池/StatView/WallFilter | ✅ 配置/代码 | ⚠️ H2 池配置测试；WallFilter 仅 MySQL 配置 | WallFilter/StatView 未在真实 MySQL 验证 |
 | Poly 全家桶 | ✅ vendored | ✅ 359 个测试 | 原项目源码整体拷贝 |
@@ -145,4 +147,4 @@ java -jar java-ecology-spring-boot-web/target/java-ecology-spring-boot-web.jar -
 
 ## 说明
 
-当前已完成基础 Web、数据访问、连接池、ORM 增强、多数据源、Redis、Redisson、Nacos、ShardingSphere-JDBC、Dubbo、Lucene、Elasticsearch、OpenFeign、Gateway、Kafka、RocketMQ、Sentinel、Seata、Observability 和 Netty 模块，并完整 vendoring 了 Poly 项目；后续按“稳定性 → 可观测性 → 传输”的顺序逐步补充。
+当前已完成基础 Web、数据访问、连接池、ORM 增强、多数据源、Redis、Redisson、Nacos、ShardingSphere-JDBC、Dubbo、Lucene、Elasticsearch、OpenFeign、Gateway、Kafka、RocketMQ、Sentinel、Seata、Observability、Netty 和 gRPC 模块，并完整 vendoring 了 Poly 项目；后续按“稳定性 → 可观测性 → 传输”的顺序逐步补充。

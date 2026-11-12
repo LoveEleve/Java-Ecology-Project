@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: grpc-client
+server:
+  port: 8106
+  shutdown: graceful
+app:
+  grpc:
+    client:
+      host: ${GRPC_SERVER_HOST:127.0.0.1}
+      port: ${GRPC_SERVER_PORT:9090}
+      deadline-millis: 3000
+      max-retry-attempts: 3
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: never

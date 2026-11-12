@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: grpc-server
+server:
+  port: 8105
+  shutdown: graceful
+app:
+  grpc:
+    server:
+      enabled: ${GRPC_SERVER_ENABLED:true}
+      port: ${GRPC_SERVER_PORT:9090}
+      max-inbound-message-size: 4194304
+      keep-alive-seconds: 30
+      permit-keep-alive-seconds: 10
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: never

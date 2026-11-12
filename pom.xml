@@ -42,6 +42,7 @@
         <module>java-ecology-seata</module>
         <module>java-ecology-observability</module>
         <module>java-ecology-netty</module>
+        <module>java-ecology-grpc</module>
     </modules>
 
     <properties>
