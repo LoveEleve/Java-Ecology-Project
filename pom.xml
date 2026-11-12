@@ -26,6 +26,7 @@
         <module>java-ecology-mybatis-plus</module>
         <module>java-ecology-multi-datasource</module>
         <module>java-ecology-poly</module>
+        <module>java-ecology-redis</module>
     </modules>
 
     <properties>
