@@ -1,0 +1,32 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        enabled: true
+        server-addr: ${NACOS_SERVER:127.0.0.1:8848}
+        namespace: ${NACOS_NAMESPACE:}
+        group: ${NACOS_GROUP:DEFAULT_GROUP}
+        username: ${NACOS_USERNAME:}
+        password: ${NACOS_PASSWORD:}
+
+seata:
+  enabled: true
+  registry:
+    type: nacos
+    nacos:
+      application: seata-server
+      server-addr: ${NACOS_SERVER:127.0.0.1:8848}
+      group: ${SEATA_NACOS_GROUP:SEATA_GROUP}
+      namespace: ${NACOS_NAMESPACE:}
+      client-application: ${spring.application.name}
+      username: ${NACOS_USERNAME:}
+      password: ${NACOS_PASSWORD:}
+  config:
+    type: nacos
+    nacos:
+      server-addr: ${NACOS_SERVER:127.0.0.1:8848}
+      group: ${SEATA_NACOS_GROUP:SEATA_GROUP}
+      namespace: ${NACOS_NAMESPACE:}
+      data-id: ${SEATA_NACOS_DATA_ID:seataServer.properties}
+      username: ${NACOS_USERNAME:}
+      password: ${NACOS_PASSWORD:}

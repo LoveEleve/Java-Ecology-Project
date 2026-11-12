@@ -45,7 +45,8 @@ Java 生态的生产级使用案例集合，基于 Spring Boot 构建。目标�
 | `java-ecology-kafka` | Kafka：幂等 Producer、批量消费、手动 ack、DB 幂等、重试、DLT | ✅ |
 | `java-ecology-rocketmq` | RocketMQ：同步/异步/单向/批量/延迟/顺序/事务消息、并发、幂等、DLQ | ✅ |
 | `java-ecology-sentinel` | Sentinel：流控、熔断、热点参数、系统/授权规则、注解降级、Nacos 动态规则 | ✅ |
-| 后续模块 | Seata、可观测性等 | ⏳ |
+| `java-ecology-seata` | Seata AT：Order/Account/Storage 三服务、全局事务、XID 透传、幂等、undo_log、Nacos 集群配置 | ✅ |
+| 后续模块 | 可观测性等 | ⏳ |
 
 ## 构建与运行
 
@@ -110,6 +111,7 @@ java -jar java-ecology-spring-boot-web/target/java-ecology-spring-boot-web.jar -
 | Kafka Producer/Consumer/Batch/DB 幂等/DLT | ✅ | ✅ Embedded Kafka | 未接真实集群 |
 | RocketMQ 同步/异步/延迟/顺序/事务 | ✅ | ✅ 12 个单测（无 Broker） | 未接真实 Broker |
 | Sentinel 流控/熔断/热点/系统/授权 | ✅ | ✅ 16 个单测（无 Dashboard/Nacos） | 未接真实规则中心 |
+| Seata AT 全局事务/三服务/幂等/undo_log | ✅ | ✅ 26 个单测/上下文（无 TC/Nacos/MySQL） | 未接真实 TC/MySQL |
 | Nacos 集群/鉴权 | ⚠️ 配置支持 | ❌ | 仅 standalone 手工验证 |
 | Druid 池/StatView/WallFilter | ✅ 配置/代码 | ⚠️ H2 池配置测试；WallFilter 仅 MySQL 配置 | WallFilter/StatView 未在真实 MySQL 验证 |
 | Poly 全家桶 | ✅ vendored | ✅ 359 个测试 | 原项目源码整体拷贝 |
@@ -139,4 +141,4 @@ java -jar java-ecology-spring-boot-web/target/java-ecology-spring-boot-web.jar -
 
 ## 说明
 
-当前已完成基础 Web、数据访问、连接池、ORM 增强、多数据源、Redis、Redisson、Nacos、ShardingSphere-JDBC、Dubbo、Lucene、Elasticsearch、OpenFeign、Gateway、Kafka、RocketMQ 和 Sentinel 模块，并完整 vendoring 了 Poly 项目；后续按“稳定性 → 可观测性 → 传输”的顺序逐步补充。
+当前已完成基础 Web、数据访问、连接池、ORM 增强、多数据源、Redis、Redisson、Nacos、ShardingSphere-JDBC、Dubbo、Lucene、Elasticsearch、OpenFeign、Gateway、Kafka、RocketMQ、Sentinel 和 Seata 模块，并完整 vendoring 了 Poly 项目；后续按“稳定性 → 可观测性 → 传输”的顺序逐步补充。
