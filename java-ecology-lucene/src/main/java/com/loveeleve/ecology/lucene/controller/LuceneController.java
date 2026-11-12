@@ -1,5 +1,6 @@
 package com.loveeleve.ecology.lucene.controller;
 
+import com.loveeleve.ecology.lucene.dto.IndexInspectResult;
 import com.loveeleve.ecology.lucene.dto.SearchResult;
 import com.loveeleve.ecology.lucene.model.Article;
 import com.loveeleve.ecology.lucene.service.LuceneIndexService;
@@ -39,8 +40,9 @@ public class LuceneController {
     @GetMapping("/search")
     public SearchResult search(@RequestParam(defaultValue = "") String q,
                                @RequestParam(defaultValue = "1") int page,
-                               @RequestParam(defaultValue = "10") int size) throws Exception {
-        return indexService.search(q, page, size);
+                               @RequestParam(defaultValue = "10") int size,
+                               @RequestParam(defaultValue = "relevance") String sort) throws Exception {
+        return indexService.search(q, page, size, sort);
     }
 
     @GetMapping("/facets")
@@ -51,5 +53,10 @@ public class LuceneController {
     @GetMapping("/count")
     public long count() throws Exception {
         return indexService.documentCount();
+    }
+
+    @GetMapping("/index/inspect")
+    public IndexInspectResult inspect() throws Exception {
+        return indexService.inspect();
     }
 }

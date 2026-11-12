@@ -1,6 +1,6 @@
 # java-ecology-lucene
 
-Lucene 9.9.2 嵌入式搜索模块：索引写入、SmartChinese 分析器、QueryParser、BM25 排序、分页、高亮和内存 Directory。
+Lucene 9.9.2 嵌入式搜索模块：索引写入、SmartChinese 分析器、QueryParser、BM25 相关度/时间排序、分页、高亮、Facet 和可检查的 FSDirectory。
 
 ## 定位
 
@@ -23,7 +23,7 @@ Lucene 是**嵌入式搜索库**，不是独立服务；每个应用进程自己
 | Lucene 9.9.2 | Core、QueryParser、Highlighter |
 | SmartChineseAnalyzer | 中文分词示例 |
 | Spring Boot 3.2.5 | Web、Actuator、测试 |
-| ByteBuffersDirectory / FSDirectory | 默认内存；`app.lucene.path` 非空时持久化 |
+| FSDirectory / ByteBuffersDirectory | 默认 FSDirectory；`app.lucene.path` 为空时切换为内存 |
 
 ## 目录结构
 
@@ -36,6 +36,7 @@ java-ecology-lucene
    │  ├─ LuceneApplication.java
    │  ├─ model/Article.java
    │  ├─ dto/SearchResult.java
+   │  ├─ dto/IndexInspectResult.java
    │  ├─ service/LuceneIndexService.java
    │  └─ controller/LuceneController.java
    ├─ main/resources/application.yml
@@ -50,14 +51,16 @@ java-ecology-lucene
 | 索引写入/更新 | `LuceneIndexService.index` | `service/LuceneIndexService.java` | `LuceneIndexServiceTests` |
 | 中文分词 | `SmartChineseAnalyzer` | `service/LuceneIndexService.java` | 测试 |
 | 查询解析 | `MultiFieldQueryParser` | `service/LuceneIndexService.java` | 测试 |
-| BM25 排序 | `IndexSearcher.search` | `service/LuceneIndexService.java` | 测试 |
+| BM25 相关度排序 | `IndexSearcher.search(query, n)` | `service/LuceneIndexService.java` | 测试 |
+| 按时间排序 | `Sort` + `NumericDocValuesField` | `service/LuceneIndexService.java` | 测试 |
 | NRT / SearcherManager | `SearcherManager` | `service/LuceneIndexService.java` | 测试 |
 | 高亮 | `Highlighter` + `QueryScorer` | `service/LuceneIndexService.java` | 测试 |
-| 分页/按时间排序 | `from/size` + `Sort` | `service/LuceneIndexService.java` | 测试 |
+| 分页 | `from/size` | `service/LuceneIndexService.java` | 测试 |
 | 删除/计数 | `deleteDocuments` / `numDocs` | `service/LuceneIndexService.java` | 测试 |
 | Facet 分类统计 | `categoryCounts` | `service/LuceneIndexService.java` | 测试 |
-| FSDirectory 持久化 | `app.lucene.path` | `service/LuceneIndexService.java` | 代码/配置 |
-| REST 入口 | `LuceneController` | `controller/LuceneController.java` | 代码/配置 |
+| FSDirectory 持久化 | `app.lucene.path` | `service/LuceneIndexService.java` | 手动验证 |
+| 索引文件/段检查 | `LuceneIndexService.inspect` | `dto/IndexInspectResult.java` | 手动验证 |
+| REST 入口 | `LuceneController` | `controller/LuceneController.java` | 手动验证 |
 
 ## 接口清单
 
@@ -65,9 +68,10 @@ java-ecology-lucene
 |---|---|---|
 | POST | `/api/lucene/articles` | 写入或更新文章 |
 | DELETE | `/api/lucene/articles/{id}` | 删除文章 |
-| GET | `/api/lucene/search?q=&page=&size=` | 搜索、分页、高亮 |
+| GET | `/api/lucene/search?q=&page=&size=&sort=relevance` | 搜索、分页、高亮；`sort=latest` 按时间 |
 | GET | `/api/lucene/facets?q=` | category facet 统计 |
 | GET | `/api/lucene/count` | 文档数 |
+| GET | `/api/lucene/index/inspect` | 索引目录、文件、segment、提交点 |
 | GET | `/actuator/health` | 健康检查 |
 
 ## 运行
@@ -77,7 +81,25 @@ export JAVA_HOME=/env/javaEnv/jdk17
 ./mvnw -pl java-ecology-lucene spring-boot:run
 ```
 
-默认使用内存 Directory，重启后索引丢失；设置 `app.lucene.path=/data/lucene/ecology` 会切换到 `FSDirectory.open(Path)`。生产还要处理 commit、refresh、备份和文件锁。
+默认使用 `./data/lucene-index`，可以直接在磁盘上看到 Lucene 文件：
+
+```text
+data/lucene-index/
+  ├─ segments_1
+  ├─ _0.si
+  ├─ _0.fnm
+  ├─ _0_Lucene99_0.tim
+  ├─ _0_Lucene99_0.doc
+  ├─ _0_Lucene99_0.pos
+  ├─ _0_Lucene90_0.dvd
+  ├─ _0_Lucene90_0.dvm
+  ├─ _0.nvd
+  ├─ _0.nvm
+  ├─ _0.fdt / _0.fdx / _0.fdm
+  └─ write.lock
+```
+
+把 `app.lucene.path` 设为空会切换到内存 Directory，重启后索引丢失。生产还要处理 commit、refresh、备份和文件锁。
 
 ## 验证
 
@@ -86,9 +108,12 @@ curl -s -X POST http://localhost:8092/api/lucene/articles \
   -H 'Content-Type: application/json' \
   -d '{"id":"1","title":"Lucene 搜索引擎","content":"Lucene 是嵌入式搜索库","category":"search","publishTime":1700000000000}'
 
-curl -s 'http://localhost:8092/api/lucene/search?q=搜索&page=1&size=10'
+curl -s 'http://localhost:8092/api/lucene/search?q=搜索&page=1&size=10&sort=relevance'
+curl -s 'http://localhost:8092/api/lucene/search?q=搜索&page=1&size=10&sort=latest'
 curl -s http://localhost:8092/api/lucene/count
-curl -s 'http://localhost:8092/api/lucene/facets?q=搜索' 
+curl -s 'http://localhost:8092/api/lucene/facets?q=搜索'
+curl -s http://localhost:8092/api/lucene/index/inspect
+ls -lh data/lucene-index
 ```
 
 ## 生产注意事项
@@ -105,7 +130,7 @@ curl -s 'http://localhost:8092/api/lucene/facets?q=搜索'
 
 - 未实现 NRT 定时刷新线程（当前写入后 `maybeRefresh`）。
 - 未实现 join、spellcheck、自定义 Analyzer。
-- FSDirectory 持久化只有配置入口，未做重启/文件锁/备份测试。
+- 已手动验证 FSDirectory 文件和重启持久化，未做文件锁/备份自动化测试。
 - 未做大数据量/并发写入压测。
 
 ## 参考

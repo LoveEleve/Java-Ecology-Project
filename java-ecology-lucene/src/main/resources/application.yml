@@ -3,7 +3,8 @@ spring:
     name: java-ecology-lucene
 app:
   lucene:
-    path: ${LUCENE_INDEX_PATH:}
+    path: ${LUCENE_INDEX_PATH:./data/lucene-index}
+    commit-on-write: true
 
 server:
   port: 8092
