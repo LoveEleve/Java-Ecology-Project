@@ -43,6 +43,7 @@
         <module>java-ecology-observability</module>
         <module>java-ecology-netty</module>
         <module>java-ecology-grpc</module>
+        <module>java-ecology-websocket</module>
     </modules>
 
     <properties>
