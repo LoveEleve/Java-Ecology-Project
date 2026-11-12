@@ -1,0 +1,54 @@
+spring:
+  application:
+    name: java-ecology-observability
+  lifecycle:
+    timeout-per-shutdown-phase: 20s
+
+server:
+  port: 8103
+  shutdown: graceful
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+        demo.order.timed: true
+      percentiles:
+        http.server.requests: 0.5,0.95,0.99
+  tracing:
+    enabled: ${TRACING_ENABLED:true}
+    sampling:
+      probability: ${TRACING_SAMPLE_RATE:1.0}
+    propagation:
+      type: w3c
+  otlp:
+    tracing:
+      endpoint: ${OTLP_ENDPOINT:http://127.0.0.1:4318/v1/traces}
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
+  level:
+    root: INFO
+    com.loveeleve.ecology.observability: INFO
