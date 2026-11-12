@@ -1,0 +1,13 @@
+app:
+  sentinel:
+    demo-rules: false
+    nacos:
+      enabled: true
+      server-addr: ${NACOS_SERVER:127.0.0.1:8848}
+      namespace: ${NACOS_NAMESPACE:}
+      group-id: ${SENTINEL_NACOS_GROUP:SENTINEL_GROUP}
+      data-id-prefix: ${spring.application.name}
+      username: ${NACOS_USERNAME:}
+      password: ${NACOS_PASSWORD:}
+      access-key: ${NACOS_ACCESS_KEY:}
+      secret-key: ${NACOS_SECRET_KEY:}

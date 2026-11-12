@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: java-ecology-sentinel
+  cloud:
+    sentinel:
+      transport:
+        dashboard: ${SENTINEL_DASHBOARD:}
+        port: ${SENTINEL_TRANSPORT_PORT:8719}
+        heartbeat-interval-ms: 10000
+        eager: false
+      web-context-unify: false
+      filter:
+        enabled: true
+
+server:
+  port: 8099
+  shutdown: graceful
+
+app:
+  sentinel:
+    demo-rules: ${SENTINEL_DEMO_RULES:true}
+    nacos:
+      enabled: false
+      server-addr: ${NACOS_SERVER:127.0.0.1:8848}
+      namespace: ${NACOS_NAMESPACE:}
+      group-id: ${SENTINEL_NACOS_GROUP:SENTINEL_GROUP}
+      data-id-prefix: ${spring.application.name}
+      username: ${NACOS_USERNAME:}
+      password: ${NACOS_PASSWORD:}
+      access-key: ${NACOS_ACCESS_KEY:}
+      secret-key: ${NACOS_SECRET_KEY:}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: never

@@ -38,6 +38,7 @@
         <module>java-ecology-gateway</module>
         <module>java-ecology-kafka</module>
         <module>java-ecology-rocketmq</module>
+        <module>java-ecology-sentinel</module>
     </modules>
 
     <properties>
