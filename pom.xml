@@ -41,6 +41,7 @@
         <module>java-ecology-sentinel</module>
         <module>java-ecology-seata</module>
         <module>java-ecology-observability</module>
+        <module>java-ecology-netty</module>
     </modules>
 
     <properties>

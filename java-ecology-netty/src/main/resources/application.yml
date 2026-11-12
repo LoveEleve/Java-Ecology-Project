@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: java-ecology-netty
+server:
+  port: 8104
+  shutdown: graceful
+app:
+  netty:
+    server:
+      enabled: true
+      bind-address: ${NETTY_BIND_ADDRESS:0.0.0.0}
+      port: ${NETTY_PORT:9000}
+      boss-threads: 1
+      worker-threads: 0
+      max-connections: 1000
+      idle-seconds: 120
+      write-timeout-seconds: 10
+    client:
+      enabled: ${NETTY_CLIENT_ENABLED:false}
+      host: ${NETTY_CLIENT_HOST:127.0.0.1}
+      port: ${NETTY_CLIENT_PORT:9000}
+      reconnect-seconds: 3
+      request-timeout-seconds: 5
+      connect-timeout-millis: 3000
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: never
