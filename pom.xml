@@ -27,6 +27,7 @@
         <module>java-ecology-multi-datasource</module>
         <module>java-ecology-poly</module>
         <module>java-ecology-redis</module>
+        <module>java-ecology-redisson</module>
     </modules>
 
     <properties>
@@ -39,6 +40,7 @@
         <mybatis-spring-boot.version>3.0.5</mybatis-spring-boot.version>
         <druid.version>1.2.28</druid.version>
         <mybatis-plus.version>3.5.7</mybatis-plus.version>
+        <redisson.version>3.27.0</redisson.version>
     </properties>
 
     <dependencyManagement>
@@ -67,6 +69,11 @@
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
                 <version>${mybatis-plus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.redisson</groupId>
+                <artifactId>redisson-spring-boot-starter</artifactId>
+                <version>${redisson.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

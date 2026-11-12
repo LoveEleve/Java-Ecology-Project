@@ -1,0 +1,8 @@
+logging:
+  level:
+    org.redisson: debug
+
+management:
+  endpoint:
+    health:
+      show-details: always
