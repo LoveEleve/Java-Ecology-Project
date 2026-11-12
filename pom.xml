@@ -44,6 +44,7 @@
         <module>java-ecology-netty</module>
         <module>java-ecology-grpc</module>
         <module>java-ecology-websocket</module>
+        <module>java-ecology-webflux</module>
     </modules>
 
     <properties>

@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: java-ecology-webflux
+  codec:
+    max-in-memory-size: 1MB
+server:
+  port: 8108
+  shutdown: graceful
+  netty:
+    connection-timeout: 2s
+    idle-timeout: 30s
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: never
