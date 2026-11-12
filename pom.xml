@@ -28,6 +28,7 @@
         <module>java-ecology-poly</module>
         <module>java-ecology-redis</module>
         <module>java-ecology-redisson</module>
+        <module>java-ecology-nacos</module>
     </modules>
 
     <properties>

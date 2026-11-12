@@ -34,7 +34,8 @@ Java 生态的生产级使用案例集合，基于 Spring Boot 构建。目标�
 | `java-ecology-poly` | 完整 vendoring Poly 项目：PolyZone/PolyConfig/PolyData/PolyCache/PolyGateway 源码与测试 | ✅ |
 | `java-ecology-redis` | Redis：Spring Data Redis、Lettuce、Cache、Lua、Pipeline、Cluster 配置 | ✅ |
 | `java-ecology-redisson` | Redisson：分布式锁/看门狗、公平锁/读写锁、限流、信号量、MapCache | ✅ |
-| 后续模块 | Nacos、Dubbo、Kafka、Sentinel、Seata、ShardingSphere、可观测性等 | ⏳ |
+| `java-ecology-nacos` | Nacos：配置中心、动态刷新、服务注册与发现 | ✅ |
+| 后续模块 | RPC/网关、Kafka、Sentinel、Seata、ShardingSphere、可观测性等 | ⏳ |
 
 ## 构建与运行
 
@@ -73,4 +74,4 @@ java -jar java-ecology-spring-boot-web/target/java-ecology-spring-boot-web.jar -
 
 ## 说明
 
-当前已完成基础 Web、数据访问、连接池、ORM 增强、多数据源、Redis 和 Redisson 模块，并完整 vendoring 了 Poly 项目；后续按“注册/RPC/网关 → 消息 → 稳定性 → 可观测性 → 传输”的顺序逐步补充。
+当前已完成基础 Web、数据访问、连接池、ORM 增强、多数据源、Redis、Redisson 和 Nacos 模块，并完整 vendoring 了 Poly 项目；后续按“RPC/网关 → 消息 → 稳定性 → 可观测性 → 传输”的顺序逐步补充。

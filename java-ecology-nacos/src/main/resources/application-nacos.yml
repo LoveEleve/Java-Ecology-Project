@@ -1,0 +1,22 @@
+spring:
+  config:
+    import: optional:nacos:${spring.application.name}.yaml?group=ECO_ECOLOGY&refreshEnabled=true
+  cloud:
+    nacos:
+      server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+      username: ${NACOS_USERNAME:nacos}
+      password: ${NACOS_PASSWORD:nacos}
+      discovery:
+        enabled: true
+        namespace: ${NACOS_NAMESPACE:}
+        group: ECO_ECOLOGY
+      config:
+        enabled: true
+        namespace: ${NACOS_NAMESPACE:}
+        group: ECO_ECOLOGY
+        file-extension: yaml
+        refresh-enabled: true
+
+ecology:
+  nacos:
+    publish-enabled: ${NACOS_PUBLISH_ENABLED:false}
