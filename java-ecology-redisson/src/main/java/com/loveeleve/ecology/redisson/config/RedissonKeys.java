@@ -10,6 +10,14 @@ public final class RedissonKeys {
     private RedissonKeys() {
     }
 
+    public static String redLock(String name) {
+        return PREFIX + "red-lock:" + safe(name);
+    }
+
+    public static String async(String name) {
+        return PREFIX + "async:" + safe(name);
+    }
+
     public static String lock(String name) {
         return PREFIX + "lock:" + safe(name);
     }

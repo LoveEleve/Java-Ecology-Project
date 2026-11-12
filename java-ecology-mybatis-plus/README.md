@@ -59,6 +59,18 @@ java-ecology-mybatis-plus
       └─ UserApiTests.java
 ```
 
+## 功能与文件
+
+| 能力 | 入口/Bean | 对应文件 | 验证 |
+|---|---|---|---|
+| BaseMapper / IService | `UserMapper`、`UserService` | `mapper/UserMapper.java`、`service/UserService.java` | `UserServiceTests` |
+| Lambda Wrapper / 分页 | `UserService.query` | `service/UserService.java` | `UserServiceTests` |
+| 乐观锁 / 逻辑删除 / 自动填充 | `User` + 插件 | `entity/User.java`、`config/` | `UserServiceTests` |
+| 枚举映射 | `UserStatus` `@EnumValue` | `enums/UserStatus.java` | `UserServiceTests` |
+| 自定义 SQL | `UserMapper.selectByStatus` | `mapper/UserMapper.java` | `UserServiceTests` |
+| SQL 注入器 | `CustomSqlInjector` | `injector/`、`UserMapper.selectByUsername` | `UserServiceTests` |
+| 多租户 / 数据权限 / 动态表名 | `AdvancedMybatisPlusProperties` | `advanced/`、`config/MybatisPlusConfig.java` | 默认关闭，未测 |
+
 ## 接口清单
 
 | 方法 | 路径 | 用途 |
@@ -168,6 +180,25 @@ curl -s http://localhost:8083/actuator/health
 - **分页插件要限制最大页大小**：本模块在 service 层把 `size` 限制到 100；生产还应对深分页做游标/延迟关联优化。
 - **枚举存 code 不存 name**：`@EnumValue` 让数据库存 `1/0`，避免改枚举常量名导致数据失效；新增枚举值要保证 code 不复用。
 - **多数据源不要塞进本模块**：数据源路由、读写分离、分库分表是独立关注点，见后续 `java-ecology-multi-datasource`。
+
+## 高级扩展代码（默认关闭，未全部跑测试）
+
+`MybatisPlusConfig` 已写好以下扩展，但默认全部关闭，避免影响基础 CRUD 测试：
+
+| 能力 | 代码 | 开启配置 |
+|---|---|---|
+| 多租户 | `TenantLineInnerInterceptor` + `TenantLineHandlerImpl` | `app.mybatis-plus.advanced.tenant-enabled=true`，表需有 `tenant_id` |
+| 数据权限 | `DataPermissionInterceptor` + `DataPermissionHandlerImpl` | `...data-permission-enabled=true`，SQL 片段可配置 |
+| 动态表名 | `DynamicTableNameInnerInterceptor` + `DynamicTableNameHandlerImpl` | `...dynamic-table-enabled=true` |
+| SQL 注入器 | `CustomSqlInjector` + `SelectByUsername` | `ISqlInjector` Bean 自动生效，`UserMapper.selectByUsername` |
+
+这些是生产常见扩展点，不是默认业务逻辑；开启前要补对应列/表，并验证 SQL 解析边界。SQL 注入器 `selectByUsername` 已有测试，多租户/数据权限/动态表名默认关闭，未做全量测试。
+
+## 未覆盖/未验证
+
+- 多租户/数据权限/动态表名默认关闭，未做对应表和 SQL 解析测试。
+- 自定义 SQL 注入器已测；多租户/权限列、动态表需要业务表配合。
+- 二级缓存、跨库分页等未在本模块展开。
 
 ## 参考
 

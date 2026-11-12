@@ -1,9 +1,11 @@
 package com.loveeleve.ecology.redisson.controller;
 
 import com.loveeleve.ecology.redisson.common.ApiResponse;
+import com.loveeleve.ecology.redisson.service.AsyncService;
 import com.loveeleve.ecology.redisson.service.LockService;
 import com.loveeleve.ecology.redisson.service.MapCacheService;
 import com.loveeleve.ecology.redisson.service.RateLimiterService;
+import com.loveeleve.ecology.redisson.service.RedLockService;
 import com.loveeleve.ecology.redisson.service.SemaphoreService;
 import org.redisson.api.RateIntervalUnit;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,15 +25,21 @@ public class RedissonController {
     private final RateLimiterService rateLimiterService;
     private final SemaphoreService semaphoreService;
     private final MapCacheService mapCacheService;
+    private final RedLockService redLockService;
+    private final AsyncService asyncService;
 
     public RedissonController(LockService lockService,
                               RateLimiterService rateLimiterService,
                               SemaphoreService semaphoreService,
-                              MapCacheService mapCacheService) {
+                              MapCacheService mapCacheService,
+                              RedLockService redLockService,
+                              AsyncService asyncService) {
         this.lockService = lockService;
         this.rateLimiterService = rateLimiterService;
         this.semaphoreService = semaphoreService;
         this.mapCacheService = mapCacheService;
+        this.redLockService = redLockService;
+        this.asyncService = asyncService;
     }
 
     @PostMapping("/lock/{name}/increment")
@@ -61,6 +69,18 @@ public class RedissonController {
     @GetMapping("/read-write/{name}")
     public ApiResponse<String> read(@PathVariable String name) {
         return ApiResponse.ok(lockService.withReadLock(name));
+    }
+
+    @PostMapping("/red-lock/{name}")
+    public ApiResponse<Boolean> redLock(@PathVariable String name,
+                                        @RequestParam(defaultValue = "100") long waitMillis,
+                                        @RequestParam(defaultValue = "3000") long leaseMillis) {
+        return ApiResponse.ok(redLockService.tryLock(name, waitMillis, leaseMillis));
+    }
+
+    @PostMapping("/async/{name}")
+    public ApiResponse<String> async(@PathVariable String name, @RequestParam String value) {
+        return ApiResponse.ok(asyncService.setAndGet(name, value));
     }
 
     @PostMapping("/rate-limit/{name}")

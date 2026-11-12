@@ -10,6 +10,8 @@ import java.util.List;
 
 public interface UserMapper extends BaseMapper<User> {
 
+    User selectByUsername(@Param("username") String username);
+
     @Select("""
             SELECT id, username, email, status, age, version, deleted, created_at, updated_at
             FROM ecology_user

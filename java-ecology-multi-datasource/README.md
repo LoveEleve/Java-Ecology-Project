@@ -112,6 +112,17 @@ public List<Account> reportAccountsByMyBatisPlus() {
 
 `@DataSource + @Transactional` 的顺序由测试覆盖：路由先设置，事务再获取连接，因此事务内查询走报表库。
 
+## 功能与文件
+
+| 能力 | 入口/Bean | 对应文件 | 验证 |
+|---|---|---|---|
+| 静态多库 | `StaticAccountService` | `config/MultiDataSourceConfig.java`、`repository/Master*`、`repository/Report*` | `MultiDataSourceTests` |
+| 动态路由 | `RoutingDataSource` | `config/RoutingDataSource.java`、`DataSourceContextHolder.java` | `MultiDataSourceTests` |
+| 注解切库 | `@DataSource` + `DataSourceAspect` | `config/DataSource.java`、`config/DataSourceAspect.java` | `MultiDataSourceTests` |
+| 编程式切库 | `accountsByKey` | `service/DynamicAccountService.java` | `MultiDataSourceTests` |
+| MP 接入 | `AccountMapper` | `mapper/`、`service/DynamicAccountService.java` | `MultiDataSourceTests` |
+| 独立连接池 | 两套 Hikari 配置 | `application.yml`、`application-mysql.yml` | `MultiDataSourceTests` |
+
 ## 接口清单
 
 | 方法 | 路径 | 用途 |
@@ -206,6 +217,12 @@ curl -s http://localhost:8084/actuator/health
 - **MP 支持多数据源，但不等于自带动态路由**：MP 能消费任意 `DataSource`；动态切库仍由路由层（`AbstractRoutingDataSource` 或 `dynamic-datasource`）完成。静态多库用多个 `SqlSessionFactory`，动态多库让 MP 使用 routing `DataSource`。
 - **自调用不触发 AOP**：同一个 Service 内 `this.reportMethod()` 不会经过代理，`@DataSource` 不生效；要拆到另一个 Bean 或显式设置上下文。
 - **生产不要用 `CommandLineRunner` 建表**：本模块只为 H2 演示；真实环境用 Flyway/Liquibase，并让 DBA 审核 DDL。
+
+## 未覆盖/未验证
+
+- 跨库强一致事务（Seata）未实现。
+- 读写分离、分库分表不在本模块，分别见 ShardingSphere 模块。
+- `CommandLineRunner` 建表只用于 H2 演示，生产必须用迁移工具。
 
 ## 参考
 

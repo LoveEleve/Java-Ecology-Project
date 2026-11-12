@@ -47,6 +47,16 @@ java-ecology-nacos
       └─ NacosControllerTests.java
 ```
 
+## 功能与文件
+
+| 能力 | 入口/Bean | 对应文件 | 验证 |
+|---|---|---|---|
+| 配置导入/刷新 | `spring.config.import` + `NacosDemoProperties` | `application-nacos.yml`、`config/NacosDemoProperties.java` | 真实 Nacos 手工验证 |
+| 配置读取/发布 | `NacosController` | `controller/NacosController.java` | `NacosControllerTests`（关闭模式）+ 手工验证 |
+| 服务注册 | Nacos Discovery starter | `application-nacos.yml` | 真实 Nacos 手工验证 |
+| 服务发现 | `DiscoveryClient` | `controller/NacosController.java` | `NacosControllerTests` + 手工验证 |
+| namespace/group/auth | Nacos properties | `application-nacos.yml` | standalone 手工验证 |
+
 ## 接口清单
 
 | 方法 | 路径 | 用途 |
@@ -208,6 +218,12 @@ curl -s http://localhost:8087/actuator/health
 - **namespace/group 是隔离边界，不是权限边界**：多租户隔离还要配合 Nacos 鉴权和网络 ACL。
 - **配置监听要防惊群**：大量实例同时刷新会放大下游压力；刷新逻辑要幂等、限流、可观测。
 - **不要把 Nacos 当业务数据库**：配置中心适合小配置，不适合高频写和大对象。
+
+## 未覆盖/未验证
+
+- Nacos 集群、鉴权、TLS、命名空间隔离只做了 standalone 手工验证。
+- 自动化测试只覆盖 Nacos 关闭模式，不启动外部 Nacos。
+- 配置写入默认关闭，且接口鉴权需外部网关/ACL。
 
 ## 参考
 

@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: java-ecology-lucene
+app:
+  lucene:
+    path: ${LUCENE_INDEX_PATH:}
+
+server:
+  port: 8092
+  shutdown: graceful
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: never

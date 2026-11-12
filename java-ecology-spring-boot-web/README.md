@@ -67,6 +67,18 @@ java-ecology-spring-boot-web
 | `interceptor` | Spring MVC 拦截器（handler 日志） |
 | `model` | 领域模型 |
 
+## 功能与文件
+
+| 能力 | 入口/Bean | 对应文件 | 验证 |
+|---|---|---|---|
+| REST + 校验 + 统一错误 | `UserController`、`GlobalExceptionHandler` | `controller/UserController.java`、`exception/` | `WebApplicationTests` |
+| requestId | Filter + Resolver + Interceptor | `filter/RequestIdFilter.java`、`resolver/`、`interceptor/` | `WebApplicationTests` |
+| 异步 MVC | `AsyncController` / `AsyncConfig` | `controller/AsyncController.java`、`config/AsyncConfig.java` | `WebApplicationTests` |
+| 文件上传下载 | `FileController` / `FileStorageService` | `controller/FileController.java`、`service/FileStorageService.java` | `WebApplicationTests` |
+| Tomcat 生产配置 | `TomcatConfig` + YAML | `config/TomcatConfig.java`、`application.yml` | 启动/配置检查 |
+| CORS / 拦截器 | `WebMvcConfig` | `config/WebMvcConfig.java` | `WebApplicationTests` |
+| Actuator + 扩展模块联动 | `management` / `EcologyEndpoint` | `application.yml`、extension 模块 | `WebApplicationTests` |
+
 ## 接口清单
 
 | 方法 | 路径 | 用途 |
@@ -187,6 +199,11 @@ curl -s -F "file=@README.md" http://localhost:8080/api/files
 ## 依赖的扩展模块
 
 本模块依赖 `java-ecology-spring-boot-extension`，用于演示自动配置、条件、启动监听、FailureAnalyzer、Import、BFPP/BPP 和自定义 Actuator 端点如何被真实应用装配。扩展模块本身不写业务，Web 模块只作为运行示例。
+
+## 未覆盖/未验证
+
+- 不包含前端页面、Thymeleaf、JSP、纯展示型 Controller。
+- 未接真实外部存储/网关，上传目录使用本地临时目录演示。
 
 ## 参考
 

@@ -1,0 +1,19 @@
+spring:
+  sql:
+    init:
+      mode: never
+
+app:
+  sharding:
+    init-schema: false
+    datasources:
+      ds0:
+        url: jdbc:mysql://${MYSQL_DS0_HOST:127.0.0.1}:${MYSQL_DS0_PORT:3306}/${MYSQL_DS0_DATABASE:ecology_ds0}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        username: ${MYSQL_DS0_USER:ecology}
+        password: ${MYSQL_DS0_PASSWORD:ecology}
+      ds1:
+        url: jdbc:mysql://${MYSQL_DS1_HOST:127.0.0.1}:${MYSQL_DS1_PORT:3306}/${MYSQL_DS1_DATABASE:ecology_ds1}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        username: ${MYSQL_DS1_USER:ecology}
+        password: ${MYSQL_DS1_PASSWORD:ecology}

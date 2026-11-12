@@ -7,6 +7,7 @@ import com.loveeleve.ecology.redis.service.LeaderboardService;
 import com.loveeleve.ecology.redis.service.PipelineService;
 import com.loveeleve.ecology.redis.service.ProductCacheService;
 import com.loveeleve.ecology.redis.service.RateLimiterService;
+import com.loveeleve.ecology.redis.service.RedisTransactionService;
 import com.loveeleve.ecology.redis.service.StockService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -74,6 +75,9 @@ class RedisIntegrationTests {
 
     @Autowired
     private PipelineService pipelineService;
+
+    @Autowired
+    private RedisTransactionService transactionService;
 
     @Autowired
     private MockMvc mockMvc;
@@ -171,6 +175,14 @@ class RedisIntegrationTests {
         assertThatThrownBy(() -> stockService.deduct(sku))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("sold out");
+    }
+
+    @Test
+    void redisTransactionWritesBothKeys() {
+        List<Object> result = transactionService.multiSet("tx:a", "1", "tx:b", "2");
+        assertThat(result).hasSize(2);
+        assertThat(redisTemplate.opsForValue().get("tx:a")).isEqualTo("1");
+        assertThat(redisTemplate.opsForValue().get("tx:b")).isEqualTo("2");
     }
 
     @Test

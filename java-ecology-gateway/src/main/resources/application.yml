@@ -1,0 +1,82 @@
+spring:
+  application:
+    name: java-ecology-gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+        username: ${NACOS_USERNAME:}
+        password: ${NACOS_PASSWORD:}
+        namespace: ${NACOS_NAMESPACE:}
+        group: ECO_ECOLOGY
+        enabled: true
+    gateway:
+      routes:
+        - id: http-provider
+          uri: lb://ecology-http-provider
+          predicates:
+            - Path=/api/downstream/**
+          filters:
+            - AddRequestHeader=X-Gateway, java-ecology
+            - name: RequestRateLimiter
+              args:
+                key-resolver: '#{@ipKeyResolver}'
+                redis-rate-limiter.replenishRate: 20
+                redis-rate-limiter.burstCapacity: 40
+                redis-rate-limiter.requestedTokens: 1
+            - name: Retry
+              args:
+                retries: 2
+                methods: GET
+                statuses: BAD_GATEWAY,SERVICE_UNAVAILABLE,GATEWAY_TIMEOUT
+      httpclient:
+        connect-timeout: 1000
+        response-timeout: 3s
+        pool:
+          max-connections: 500
+          max-idle-time: 10s
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins:
+              - ${GATEWAY_ALLOWED_ORIGIN:http://localhost:3000}
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: '*'
+            allowCredentials: true
+    loadbalancer:
+      cache:
+        ttl: 35s
+        capacity: 256
+  data:
+    redis:
+      host: ${REDIS_HOST:127.0.0.1}
+      port: ${REDIS_PORT:6379}
+      timeout: 2s
+      connect-timeout: 2s
+
+server:
+  port: 8096
+  shutdown: graceful
+
+app:
+  sentinel:
+    local-rules-enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,gateway
+  endpoint:
+    health:
+      show-details: never
+
+logging:
+  level:
+    org.springframework.cloud.gateway: info
+    com.alibaba.csp.sentinel: info

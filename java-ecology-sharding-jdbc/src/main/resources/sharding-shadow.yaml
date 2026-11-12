@@ -1,0 +1,29 @@
+rules:
+- !SINGLE
+  tables:
+    - "*.*"
+- !SHADOW
+  dataSources:
+    shadow_ds:
+      productionDataSourceName: ds_prod
+      shadowDataSourceName: ds_shadow
+  tables:
+    t_order:
+      dataSourceNames:
+        - shadow_ds
+      shadowAlgorithmNames:
+        - user-id-insert-match
+        - user-id-select-match
+  shadowAlgorithms:
+    user-id-insert-match:
+      type: REGEX_MATCH
+      props:
+        regex: '[1]'
+        column: user_id
+        operation: insert
+    user-id-select-match:
+      type: REGEX_MATCH
+      props:
+        regex: '[1]'
+        column: user_id
+        operation: select

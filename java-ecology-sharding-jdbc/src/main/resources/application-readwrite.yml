@@ -1,0 +1,64 @@
+app:
+  readwrite:
+    init-schema: true
+    datasources:
+      ds0master:
+        url: jdbc:h2:mem:rw-ds0-master;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE
+        driver-class-name: org.h2.Driver
+        username: sa
+        password:
+        hikari:
+          pool-name: rw-ds0-master-pool
+          maximum-pool-size: 10
+          minimum-idle: 2
+          connection-timeout: 3000
+          validation-timeout: 1000
+          idle-timeout: 600000
+          max-lifetime: 1800000
+          keepalive-time: 60000
+          leak-detection-threshold: 20000
+      ds0slave:
+        url: jdbc:h2:mem:rw-ds0-slave;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE
+        driver-class-name: org.h2.Driver
+        username: sa
+        password:
+        hikari:
+          pool-name: rw-ds0-slave-pool
+          maximum-pool-size: 10
+          minimum-idle: 2
+          connection-timeout: 3000
+          validation-timeout: 1000
+          idle-timeout: 600000
+          max-lifetime: 1800000
+          keepalive-time: 60000
+          leak-detection-threshold: 20000
+      ds1master:
+        url: jdbc:h2:mem:rw-ds1-master;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE
+        driver-class-name: org.h2.Driver
+        username: sa
+        password:
+        hikari:
+          pool-name: rw-ds1-master-pool
+          maximum-pool-size: 10
+          minimum-idle: 2
+          connection-timeout: 3000
+          validation-timeout: 1000
+          idle-timeout: 600000
+          max-lifetime: 1800000
+          keepalive-time: 60000
+          leak-detection-threshold: 20000
+      ds1slave:
+        url: jdbc:h2:mem:rw-ds1-slave;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE
+        driver-class-name: org.h2.Driver
+        username: sa
+        password:
+        hikari:
+          pool-name: rw-ds1-slave-pool
+          maximum-pool-size: 10
+          minimum-idle: 2
+          connection-timeout: 3000
+          validation-timeout: 1000
+          idle-timeout: 600000
+          max-lifetime: 1800000
+          keepalive-time: 60000
+          leak-detection-threshold: 20000

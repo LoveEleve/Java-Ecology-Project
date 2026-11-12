@@ -1,0 +1,7 @@
+dubbo:
+  registry:
+    address: nacos://${NACOS_SERVER_ADDR:127.0.0.1:8848}
+    parameters:
+      namespace: ${NACOS_NAMESPACE:}
+      register-consumer-url: true
+    check: false

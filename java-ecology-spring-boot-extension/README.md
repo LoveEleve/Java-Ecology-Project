@@ -25,7 +25,16 @@ Spring Boot 扩展点示例库。它不是业务 starter，而是演示“一个
 | 自动配置过滤 | `EcologyAutoConfigurationImportFilter` |
 | 自动配置导入监听 | `EcologyAutoConfigurationImportListener` |
 
-## 目录
+## 技术栈
+
+| 组件 | 说明 |
+|---|---|
+| JDK 17 | 编译基线 |
+| Spring Boot 3.2.5 | 扩展点与自动配置 |
+| Spring Boot Actuator | Endpoint / Health / Info |
+| spring.factories + AutoConfiguration.imports | 启动期扩展注册 |
+
+## 目录结构
 
 ```text
 src/main/java/com/loveeleve/ecology/extension
@@ -40,6 +49,25 @@ src/main/java/com/loveeleve/ecology/extension
 ├─ processor/      BeanDefinitionRegistryPostProcessor、BeanPostProcessor
 └─ properties/     @ConfigurationProperties
 ```
+
+## 功能与文件
+
+| 能力 | 入口/Bean | 对应文件 | 验证 |
+|---|---|---|---|
+| 自动配置 | `EcologyExtensionAutoConfiguration` | `src/main/java/com/loveeleve/ecology/extension/autoconfigure/EcologyExtensionAutoConfiguration.java` | `EcologyExtensionAutoConfigurationTests` |
+| 条件装配 | `@ConditionalOnEcologyEnabled` | `condition/`、`properties/EcologyExtensionProperties.java` | `EcologyExtensionAutoConfigurationTests` |
+| Environment 预处理 | `EcologyEnvironmentPostProcessor` | `env/EcologyEnvironmentPostProcessor.java` | `EcologyEnvironmentPostProcessorTests` |
+| 启动生命周期 | Initializer / RunListener / ReadyListener / ApplicationRunner | `lifecycle/` | `EcologyExtensionAutoConfigurationTests` |
+| 失败诊断 | `EcologyFailureAnalyzer` | `failure/` | `EcologyFailureAnalyzerTests` |
+| Import 扩展 | ImportSelector / DeferredImportSelector / Registrar | `imports/` | `EcologyExtensionAutoConfigurationTests`、`EcologySpringFactoriesTests` |
+| BFPP/BPP | RegistryPostProcessor / BeanPostProcessor | `processor/` | `EcologyExtensionAutoConfigurationTests` |
+| Actuator | Endpoint / HealthIndicator / InfoContributor | `actuator/` | `EcologyExtensionAutoConfigurationTests` |
+| 配置绑定扩展 | `EcologyBindHandlerAdvisor` | `bind/EcologyBindHandlerAdvisor.java` | 配置绑定测试 |
+| 自动配置过滤/监听 | ImportFilter / ImportListener | `autoconfigure/`、`spring.factories` | `EcologyAutoConfigurationImportFilterTests`、`EcologySpringFactoriesTests` |
+
+## 接口清单
+
+本模块是扩展点库，不提供 HTTP 接口；可执行入口是自动配置、生命周期回调和 Actuator 端点，清单见“功能与文件”。
 
 ## 注册方式
 
@@ -112,3 +140,8 @@ Web 模块的 `dev` profile 已暴露 `/actuator/ecology`。
 - `FailureAnalyzer` 只做异常翻译，不吞异常。
 - Actuator 端点默认不暴露，由使用方显式配置。
 - 不包含 banner、port-shift、对象存储等边角料 starter。
+
+## 未覆盖/未验证
+
+- 不包含 banner、port-shift、对象存储等低频 starter。
+- 扩展点只做最小可运行示例，不模拟完整第三方 starter 生命周期。

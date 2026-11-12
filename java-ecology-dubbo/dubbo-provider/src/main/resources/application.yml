@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: dubbo-provider
+
+server:
+  port: 8090
+  shutdown: graceful
+
+dubbo:
+  application:
+    name: dubbo-provider
+    qos-enable: false
+  registry:
+    address: ${DUBBO_REGISTRY_ADDRESS:N/A}
+    check: false
+  protocol:
+    name: dubbo
+    port: ${DUBBO_PROVIDER_PORT:20880}
+  provider:
+    timeout: 3000
+    retries: 2
+    filter: ecologyDubboFilter
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: never

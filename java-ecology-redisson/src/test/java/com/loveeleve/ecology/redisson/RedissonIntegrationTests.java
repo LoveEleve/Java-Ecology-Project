@@ -1,8 +1,10 @@
 package com.loveeleve.ecology.redisson;
 
+import com.loveeleve.ecology.redisson.service.AsyncService;
 import com.loveeleve.ecology.redisson.service.LockService;
 import com.loveeleve.ecology.redisson.service.MapCacheService;
 import com.loveeleve.ecology.redisson.service.RateLimiterService;
+import com.loveeleve.ecology.redisson.service.RedLockService;
 import com.loveeleve.ecology.redisson.service.SemaphoreService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -60,6 +62,12 @@ class RedissonIntegrationTests {
 
     @Autowired
     private MapCacheService mapCacheService;
+
+    @Autowired
+    private RedLockService redLockService;
+
+    @Autowired
+    private AsyncService asyncService;
 
     @Autowired
     private MockMvc mockMvc;
@@ -174,6 +182,12 @@ class RedissonIntegrationTests {
         String name = "map-" + System.nanoTime();
         mapCacheService.put(name, "key", "value", 60, TimeUnit.SECONDS);
         assertThat(mapCacheService.get(name, "key")).isEqualTo("value");
+    }
+
+    @Test
+    void redLockAndAsyncApiWork() {
+        assertThat(redLockService.tryLock("redlock-" + System.nanoTime(), 100, 3000)).isTrue();
+        assertThat(asyncService.setAndGet("async-" + System.nanoTime(), "value")).isEqualTo("value");
     }
 
     @Test

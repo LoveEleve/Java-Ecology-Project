@@ -52,6 +52,17 @@ java-ecology-druid
       └─ DruidApiTests.java
 ```
 
+## 功能与文件
+
+| 能力 | 入口/Bean | 对应文件 | 验证 |
+|---|---|---|---|
+| Druid 连接池 | `DruidDataSource` 自动配置 | `application.yml`、`application-mysql.yml` | `DruidPoolTests` |
+| 池状态接口 | `PoolController` / `PoolStatsService` | `controller/PoolController.java`、`service/PoolStatsService.java` | `DruidApiTests` |
+| StatView | `stat-view-servlet` | `application.yml`、`application-dev.yml` | 默认关闭；未做 dev 页面测试 |
+| StatFilter / 慢 SQL | `filter.stat` | `application.yml` | 启动/配置检查 |
+| WallFilter | `filter.wall` | `application-mysql.yml` | 仅 MySQL 配置，未实测 |
+| WebStatFilter | `web-stat-filter` | `application.yml` | 启动/配置检查 |
+
 ## 接口清单
 
 | 方法 | 路径 | 用途 |
@@ -205,6 +216,12 @@ curl -s http://localhost:8082/druid/index.html
 - **`max-active` 要和 DB 连接数一起算**：`实例数 × max-active + 预留` 不能超过 `max_connections`。
 - **`validation-query` 有成本**：`test-while-idle` 已足够，不要同时开 `test-on-borrow` 和 `test-on-return`。
 - **H2 不是生产数据库**：H2 只验证配置和 SQL 形状，真实 MySQL 的连接回收、锁、WallFilter 规则仍需实测。
+
+## 未覆盖/未验证
+
+- WallFilter 只有 MySQL profile 配置，未连接真实 MySQL 验证。
+- StatView 只在 dev profile 开启，未做页面自动化测试。
+- Druid 加密/密码回调未写示例。
 
 ## 参考
 

@@ -1,0 +1,24 @@
+app:
+  readwrite:
+    init-schema: false
+    datasources:
+      ds0master:
+        url: jdbc:mysql://${MYSQL_RW_DS0_MASTER_HOST:127.0.0.1}:${MYSQL_RW_DS0_MASTER_PORT:3306}/${MYSQL_RW_DS0_MASTER_DB:ecology_ds0}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        username: ${MYSQL_RW_DS0_MASTER_USER:ecology}
+        password: ${MYSQL_RW_DS0_MASTER_PASSWORD:ecology}
+      ds0slave:
+        url: jdbc:mysql://${MYSQL_RW_DS0_SLAVE_HOST:127.0.0.1}:${MYSQL_RW_DS0_SLAVE_PORT:3306}/${MYSQL_RW_DS0_SLAVE_DB:ecology_ds0}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        username: ${MYSQL_RW_DS0_SLAVE_USER:ecology}
+        password: ${MYSQL_RW_DS0_SLAVE_PASSWORD:ecology}
+      ds1master:
+        url: jdbc:mysql://${MYSQL_RW_DS1_MASTER_HOST:127.0.0.1}:${MYSQL_RW_DS1_MASTER_PORT:3306}/${MYSQL_RW_DS1_MASTER_DB:ecology_ds1}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        username: ${MYSQL_RW_DS1_MASTER_USER:ecology}
+        password: ${MYSQL_RW_DS1_MASTER_PASSWORD:ecology}
+      ds1slave:
+        url: jdbc:mysql://${MYSQL_RW_DS1_SLAVE_HOST:127.0.0.1}:${MYSQL_RW_DS1_SLAVE_PORT:3306}/${MYSQL_RW_DS1_SLAVE_DB:ecology_ds1}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        username: ${MYSQL_RW_DS1_SLAVE_USER:ecology}
+        password: ${MYSQL_RW_DS1_SLAVE_PASSWORD:ecology}

@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: java-ecology-elasticsearch
+
+server:
+  port: 8093
+  shutdown: graceful
+
+app:
+  elasticsearch:
+    uri: ${ELASTICSEARCH_URI:http://127.0.0.1:9200}
+    index: ecology_articles
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: never

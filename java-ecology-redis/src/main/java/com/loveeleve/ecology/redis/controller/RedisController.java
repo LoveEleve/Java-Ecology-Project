@@ -8,6 +8,8 @@ import com.loveeleve.ecology.redis.service.HashService;
 import com.loveeleve.ecology.redis.service.LeaderboardService;
 import com.loveeleve.ecology.redis.service.PipelineService;
 import com.loveeleve.ecology.redis.service.ProductCacheService;
+import com.loveeleve.ecology.redis.service.PubSubService;
+import com.loveeleve.ecology.redis.service.RedisTransactionService;
 import com.loveeleve.ecology.redis.service.RateLimiterService;
 import com.loveeleve.ecology.redis.service.StockService;
 import jakarta.validation.Valid;
@@ -37,6 +39,8 @@ public class RedisController {
     private final RateLimiterService rateLimiterService;
     private final StockService stockService;
     private final PipelineService pipelineService;
+    private final PubSubService pubSubService;
+    private final RedisTransactionService redisTransactionService;
 
     public RedisController(ProductCacheService productCacheService,
                            CounterService counterService,
@@ -44,7 +48,9 @@ public class RedisController {
                            LeaderboardService leaderboardService,
                            RateLimiterService rateLimiterService,
                            StockService stockService,
-                           PipelineService pipelineService) {
+                           PipelineService pipelineService,
+                           PubSubService pubSubService,
+                           RedisTransactionService redisTransactionService) {
         this.productCacheService = productCacheService;
         this.counterService = counterService;
         this.hashService = hashService;
@@ -52,6 +58,8 @@ public class RedisController {
         this.rateLimiterService = rateLimiterService;
         this.stockService = stockService;
         this.pipelineService = pipelineService;
+        this.pubSubService = pubSubService;
+        this.redisTransactionService = redisTransactionService;
     }
 
     @PostMapping("/products")
@@ -119,6 +127,19 @@ public class RedisController {
     @PostMapping("/stock/{sku}/deduct")
     public ApiResponse<Long> deductStock(@PathVariable String sku) {
         return ApiResponse.ok(stockService.deduct(sku));
+    }
+
+    @PostMapping("/pubsub")
+    public ApiResponse<Long> publish(@RequestParam String message) {
+        return ApiResponse.ok(pubSubService.publish(message));
+    }
+
+    @PostMapping("/transaction")
+    public ApiResponse<List<Object>> transaction(@RequestParam String key1,
+                                                 @RequestParam String value1,
+                                                 @RequestParam String key2,
+                                                 @RequestParam String value2) {
+        return ApiResponse.ok(redisTransactionService.multiSet(key1, value1, key2, value2));
     }
 
     @PostMapping("/pipeline/{name}")

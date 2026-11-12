@@ -1,0 +1,3 @@
+mybatis:
+  configuration:
+    cache-enabled: true

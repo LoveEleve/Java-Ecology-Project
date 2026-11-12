@@ -50,6 +50,18 @@ java-ecology-redisson
       └─ RedissonIntegrationTests.java
 ```
 
+## 功能与文件
+
+| 能力 | 入口/Bean | 对应文件 | 验证 |
+|---|---|---|---|
+| 可重入锁 / 看门狗 | `LockService` | `service/LockService.java` | `RedissonIntegrationTests` |
+| 公平锁 / 读写锁 | `LockService` | `service/LockService.java` | `RedissonIntegrationTests` |
+| 限流 / 信号量 | `RateLimiterService` / `SemaphoreService` | `service/` | `RedissonIntegrationTests` |
+| MapCache | `MapCacheService` | `service/MapCacheService.java` | `RedissonIntegrationTests` |
+| RedLock / 异步 | `RedLockService` / `AsyncService` | `service/RedLockService.java`、`service/AsyncService.java` | `RedissonIntegrationTests`（API） |
+| 客户端生产配置 | `RedissonConfig` | `config/RedissonConfig.java` | `RedissonIntegrationTests` |
+| Cluster 配置 | `application-cluster.yml` | `resources/application-cluster.yml` | 未连真实集群 |
+
 ## 接口清单
 
 | 方法 | 路径 | 用途 |
@@ -183,6 +195,13 @@ curl -s 'http://localhost:8086/api/redisson/map/session?key=u1'
 
 测试会自动启动临时 `redis-server`，不依赖固定 6379 端口；本机必须安装 `redis-server`。当前测试覆盖：锁内并发读改写、跨线程 tryLock、公平锁/读写锁、限流、信号量、MapCache、HTTP 接口和 Redisson 客户端配置。
 
+## 高级用法代码（未全部跑测试）
+
+- **RedLock**：`RedLockService` 用 `RedissonRedLock` 组合多个 `RLock`，演示 API；当前示例两个锁来自同一个 RedissonClient，**不是**生产多主独立 RedLock，真 RedLock 需要独立 Redis 主节点/客户端。
+- **异步 API**：`AsyncService.setAndGet` 使用 `RBucket.setAsync/getAsync` + `RFuture.get`；单客户端 API 已测试。
+- **Cluster**：`application-cluster.yml` 已配置，未连接真实集群验证。
+- 对应 HTTP 入口：`POST /api/redisson/red-lock/{name}`、`POST /api/redisson/async/{name}`。
+
 ## 生产注意事项
 
 - **锁的 key 要按业务粒度设计**：`order:1` 和 `order:2` 不应互相阻塞；大 key/热点锁会成为吞吐瓶颈。
@@ -196,6 +215,12 @@ curl -s 'http://localhost:8086/api/redisson/map/session?key=u1'
 - **Redisson 连接数不是越大越好**：默认连接池较大，按 QPS、命令耗时和 Redis 连接上限调整；连接风暴会拖垮 Redis。
 - **Redis Cluster 多 key 要同 slot**：锁、限流、信号量通常是单 key；批量/多 key 操作要用 hash tag，避免 CROSSSLOT。
 - **健康检查只代表连接可用**：Actuator UP 不代表锁/限流业务配置正确；关键路径要有超时、降级和告警。
+
+## 未覆盖/未验证
+
+- RedLock 示例使用同一个 RedissonClient 的两个锁，不是生产多主 RedLock。
+- Cluster 只有 YAML 配置，未连接真实 Redis Cluster。
+- 长时间 watchdog 续期未做 30 秒以上测试。
 
 ## 参考
 

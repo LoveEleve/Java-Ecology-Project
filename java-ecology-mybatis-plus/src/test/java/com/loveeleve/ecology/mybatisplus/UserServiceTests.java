@@ -124,6 +124,13 @@ class UserServiceTests {
     }
 
     @Test
+    void customSqlInjectorExposesSelectByUsername() {
+        assertThat(userMapper.selectByUsername("alice"))
+                .extracting(User::getUsername)
+                .isEqualTo("alice");
+    }
+
+    @Test
     void customSqlAfterLogicDeleteMustFilterDeletedRowsExplicitly() {
         UserResponse created = userService.create(new UserCreateRequest(
                 "custom-" + UUID.randomUUID(), "custom@example.com", 30));

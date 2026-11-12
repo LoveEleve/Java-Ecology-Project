@@ -1,0 +1,64 @@
+server:
+  port: 8094
+  shutdown: graceful
+
+spring:
+  application:
+    name: java-ecology-openfeign
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+        username: ${NACOS_USERNAME:}
+        password: ${NACOS_PASSWORD:}
+        namespace: ${NACOS_NAMESPACE:}
+        group: ECO_ECOLOGY
+        enabled: true
+    loadbalancer:
+      cache:
+        ttl: 35s
+        capacity: 256
+    openfeign:
+      circuitbreaker:
+        enabled: false
+      compression:
+        request:
+          enabled: true
+          min-request-size: 2048
+        response:
+          enabled: true
+      client:
+        config:
+          default:
+            connectTimeout: 1000
+            readTimeout: 3000
+            loggerLevel: basic
+      httpclient:
+        hc5:
+          enabled: true
+        max-connections: 200
+        max-connections-per-route: 50
+        time-to-live: 900
+        time-to-live-unit: seconds
+        connection-timeout: 1000
+
+feign:
+  sentinel:
+    enabled: true
+
+app:
+  sentinel:
+    local-rules-enabled: true
+
+logging:
+  level:
+    com.loveeleve.ecology.openfeign.client.DownstreamClient: debug
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: never

@@ -29,6 +29,13 @@
         <module>java-ecology-redis</module>
         <module>java-ecology-redisson</module>
         <module>java-ecology-nacos</module>
+        <module>java-ecology-sharding-jdbc</module>
+        <module>java-ecology-dubbo</module>
+        <module>java-ecology-lucene</module>
+        <module>java-ecology-elasticsearch</module>
+        <module>java-ecology-http-provider</module>
+        <module>java-ecology-openfeign</module>
+        <module>java-ecology-gateway</module>
     </modules>
 
     <properties>
@@ -42,6 +49,7 @@
         <druid.version>1.2.28</druid.version>
         <mybatis-plus.version>3.5.7</mybatis-plus.version>
         <redisson.version>3.27.0</redisson.version>
+        <shardingsphere.version>5.5.1</shardingsphere.version>
     </properties>
 
     <dependencyManagement>
@@ -75,6 +83,11 @@
                 <groupId>org.redisson</groupId>
                 <artifactId>redisson-spring-boot-starter</artifactId>
                 <version>${redisson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shardingsphere</groupId>
+                <artifactId>shardingsphere-jdbc</artifactId>
+                <version>${shardingsphere.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

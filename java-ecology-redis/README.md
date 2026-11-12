@@ -54,6 +54,19 @@ java-ecology-redis
       └─ RedisIntegrationTests.java
 ```
 
+## 功能与文件
+
+| 能力 | 入口/Bean | 对应文件 | 验证 |
+|---|---|---|---|
+| RedisTemplate 序列化 | `RedisConfig` | `config/RedisConfig.java` | `RedisIntegrationTests` |
+| Spring Cache | `ProductCacheService` / `CacheManager` | `service/ProductCacheService.java`、`config/RedisConfig.java` | `RedisIntegrationTests` |
+| String/Hash/ZSet | `CounterService` / `HashService` / `LeaderboardService` | `service/` | `RedisIntegrationTests` |
+| Lua 限流/库存 | `RateLimiterService` / `StockService` | `service/` | `RedisIntegrationTests` |
+| Pipeline | `PipelineService` | `service/PipelineService.java` | `RedisIntegrationTests` |
+| Pub/Sub | `RedisPubSubConfig` / `PubSubService` | `config/RedisPubSubConfig.java`、`service/PubSubService.java` | 未测 |
+| Redis 事务 | `RedisTransactionService` | `service/RedisTransactionService.java` | `RedisIntegrationTests` |
+| Cluster 配置 | `application-cluster.yml` | `resources/application-cluster.yml` | 未连真实集群 |
+
 ## 接口清单
 
 | 方法 | 路径 | 用途 |
@@ -170,6 +183,13 @@ curl -s http://localhost:8085/actuator/health
 
 测试会自行启动一个临时 `redis-server` 进程，不依赖 6379 端口；本机必须安装 `redis-server`。
 
+## 高级用法代码（未全部跑测试）
+
+- **Pub/Sub**：`RedisPubSubConfig` 注册 `RedisMessageListenerContainer`，`PubSubService` 发布消息；频道 `ecology:redis:pubsub:demo`。
+- **Redis 事务**：`RedisTransactionService.multiSet` 使用 `SessionCallback` + `MULTI/EXEC`；已有测试；注意 Redis 事务不支持回滚到中间状态。
+- **Cluster**：`application-cluster.yml` 已配置，未连接真实集群验证。
+- 对应 HTTP 入口：`POST /api/redis/pubsub`、`POST /api/redis/transaction`。
+
 ## 生产注意事项
 
 - **不要用 JDK 序列化**：默认 `JdkSerializationRedisSerializer` 会产生不可读、跨语言不兼容的字节；本模块用 String key + JSON value。JSON 反序列化要限制可信来源，避免 default typing 安全风险。
@@ -183,6 +203,12 @@ curl -s http://localhost:8085/actuator/health
 - **连接池与超时要分层**：Lettuce pool、命令 timeout、连接 timeout、业务超时要分别设置；Redis 慢会反压线程池。
 - **缓存一致性**：先更新 DB 再删缓存，或延迟双删；不要假设 `@CacheEvict` 能解决并发读写竞态。
 - **分布式锁不在这里**：Redisson 模块单独讲锁续期、看门狗、可重入和 RedLock 边界。
+
+## 未覆盖/未验证
+
+- Pub/Sub 有代码示例但未做订阅断言测试。
+- Cluster 只有 YAML 配置，未连接真实 Redis Cluster。
+- 缓存穿透/击穿/雪崩只给策略说明，未做压测。
 
 ## 参考
 

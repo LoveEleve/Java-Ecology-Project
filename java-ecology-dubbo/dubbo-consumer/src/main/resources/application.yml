@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: dubbo-consumer
+
+server:
+  port: 8091
+  shutdown: graceful
+
+dubbo:
+  application:
+    name: dubbo-consumer
+    qos-enable: false
+  registry:
+    address: ${DUBBO_REGISTRY_ADDRESS:N/A}
+    check: false
+  protocol:
+    name: dubbo
+    port: -1
+  consumer:
+    check: false
+    timeout: 3000
+    retries: 2
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: never

@@ -45,6 +45,18 @@ mybatis-plus:
       logic-delete-value: 1
       logic-not-delete-value: 0
 
+app:
+  mybatis-plus:
+    advanced:
+      tenant-enabled: false
+      tenant-id: 0
+      tenant-column: tenant_id
+      data-permission-enabled: false
+      data-permission-sql: dept_id = 1
+      dynamic-table-enabled: false
+      dynamic-table-name: ecology_user
+      dynamic-table-suffix: _2026
+
 management:
   endpoints:
     web:

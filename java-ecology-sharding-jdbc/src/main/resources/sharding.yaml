@@ -1,0 +1,58 @@
+rules:
+- !SHARDING
+  tables:
+    t_order:
+      actualDataNodes: ds_${0..1}.t_order_${0..1}
+      databaseStrategy:
+        standard:
+          shardingColumn: user_id
+          shardingAlgorithmName: order_database_inline
+      tableStrategy:
+        standard:
+          shardingColumn: order_id
+          shardingAlgorithmName: order_table_inline
+    t_order_hint:
+      actualDataNodes: ds_${0..1}.t_order_hint_${0..1}
+      databaseStrategy:
+        hint:
+          shardingAlgorithmName: order_database_hint
+      tableStrategy:
+        hint:
+          shardingAlgorithmName: order_table_hint
+    t_order_item:
+      actualDataNodes: ds_${0..1}.t_order_item_${0..1}
+      databaseStrategy:
+        standard:
+          shardingColumn: user_id
+          shardingAlgorithmName: order_database_inline
+      tableStrategy:
+        standard:
+          shardingColumn: order_id
+          shardingAlgorithmName: order_item_table_inline
+  bindingTables:
+    - t_order,t_order_item
+  shardingAlgorithms:
+    order_database_inline:
+      type: INLINE
+      props:
+        algorithm-expression: ds_${user_id % 2}
+    order_table_inline:
+      type: INLINE
+      props:
+        algorithm-expression: t_order_${order_id % 2}
+    order_item_table_inline:
+      type: INLINE
+      props:
+        algorithm-expression: t_order_item_${order_id % 2}
+    order_database_hint:
+      type: CLASS_BASED
+      props:
+        strategy: HINT
+        algorithmClassName: com.loveeleve.ecology.sharding.algorithm.OrderDatabaseHintAlgorithm
+    order_table_hint:
+      type: CLASS_BASED
+      props:
+        strategy: HINT
+        algorithmClassName: com.loveeleve.ecology.sharding.algorithm.OrderTableHintAlgorithm
+props:
+  sql-show: false

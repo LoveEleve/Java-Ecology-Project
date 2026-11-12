@@ -1,0 +1,17 @@
+app:
+  sentinel:
+    local-rules-enabled: false
+
+spring:
+  cloud:
+    sentinel:
+      datasource:
+        gw-flow:
+          nacos:
+            server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+            username: ${NACOS_USERNAME:}
+            password: ${NACOS_PASSWORD:}
+            namespace: ${NACOS_NAMESPACE:}
+            group-id: ECO_ECOLOGY_SENTINEL
+            data-id: java-ecology-gateway-gw-flow-rules
+            rule-type: gw-flow

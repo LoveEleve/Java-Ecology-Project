@@ -75,6 +75,20 @@ java-ecology-mybatis
 | `entity` | 数据库实体 |
 | `enums` | 业务枚举与状态码 |
 
+## 功能与文件
+
+| 能力 | 入口/Bean | 对应文件 | 验证 |
+|---|---|---|---|
+| XML Mapper / 动态 SQL | `UserMapper` + XML | `mapper/UserMapper.java`、`resources/mapper/UserMapper.xml` | `UserMapperTests` |
+| 注解 Mapper | `UserAnnotationMapper` | `mapper/UserAnnotationMapper.java` | `UserMapperTests` |
+| TypeHandler | `UserStatusTypeHandler` | `typehandler/`、`application.yml` | `UserMapperTests` |
+| 分页 / 批量 / 事务 | `UserService` / `insertBatch` | `service/UserService.java`、`UserMapper.xml` | `UserServiceTests` |
+| 慢 SQL | `SlowSqlInterceptor` | `interceptor/`、`config/` | 启动/配置检查 |
+| Provider SQL | `UserProvider` | `provider/UserProvider.java`、`UserMapper.java` | `MyBatisAdvancedTests` |
+| 二级缓存 | `UserCacheMapper` | `mapper/UserCacheMapper.java`、`application-cache.yml` | 未测（需开启 profile） |
+| association/collection | `UserWithOrdersMapper.xml` | `model/UserWithOrders.java`、`resources/mapper/UserWithOrdersMapper.xml` | 未测（需 `t_order` 表） |
+| BatchExecutor | `UserBatchService` | `service/UserBatchService.java` | `MyBatisAdvancedTests` |
+
 ## 接口清单
 
 | 方法 | 路径 | 用途 |
@@ -232,6 +246,22 @@ curl -s http://localhost:8081/actuator/metrics/hikaricp.connections.pending
 - **生产禁用 `sql.init`**：建表、索引、数据初始化交给迁移工具；应用启动只负责连接和校验。
 - **H2 不是生产数据库**：H2 的 MySQL 模式只用于测试 SQL 形状，SQL 方言、锁、隔离级别、执行计划仍需在真实 MySQL 上验证。
 - **Druid 不放在本模块**：Druid 的 StatView、WallFilter、监控和安全配置是独立能力，统一放到 `java-ecology-druid`；MyBatis 模块固定展示 Spring Boot 默认 HikariCP。
+
+## 高级用法代码（未全部跑测试）
+
+这些代码已实现；Provider SQL 和 BatchExecutor 已纳入 H2 测试，Cache/association 依赖表结构未纳入全量测试：
+
+- **二级缓存**：`UserCacheMapper` 使用 `@CacheNamespace`；启用 profile `cache` 打开 `mybatis.configuration.cache-enabled=true`。生产多实例慎用本地二级缓存。
+- **Provider SQL**：`UserProvider` + `@SelectProvider`，见 `UserMapper.selectByEmailProvider`。
+- **association/collection**：`UserWithOrdersMapper.xml` 用 `<collection select="selectOrdersByUserId">` 做嵌套查询；需要 `t_order` 表。
+- **BatchExecutor**：`UserBatchService.batchInsert` 用 `ExecutorType.BATCH` + `flushStatements/commit`。
+- `application-cache.yml` 是二级缓存开关示例。
+
+## 未覆盖/未验证
+
+- 二级缓存只提供 `@CacheNamespace` 示例，未做多实例缓存一致性测试。
+- association/collection 依赖 `t_order` 表，未纳入全量测试。
+- 存储过程、`@SelectProvider` 动态 SQL 的复杂分支未覆盖。
 
 ## 参考
 

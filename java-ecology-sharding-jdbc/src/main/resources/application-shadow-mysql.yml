@@ -1,0 +1,14 @@
+app:
+  shadow:
+    init-schema: false
+    datasources:
+      prod:
+        url: jdbc:mysql://${MYSQL_SHADOW_PROD_HOST:127.0.0.1}:${MYSQL_SHADOW_PROD_PORT:3306}/${MYSQL_SHADOW_PROD_DB:ecology_prod}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        username: ${MYSQL_SHADOW_PROD_USER:ecology}
+        password: ${MYSQL_SHADOW_PROD_PASSWORD:ecology}
+      shadow:
+        url: jdbc:mysql://${MYSQL_SHADOW_COPY_HOST:127.0.0.1}:${MYSQL_SHADOW_COPY_PORT:3306}/${MYSQL_SHADOW_COPY_DB:ecology_shadow}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        username: ${MYSQL_SHADOW_COPY_USER:ecology}
+        password: ${MYSQL_SHADOW_COPY_PASSWORD:ecology}

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.loveeleve.ecology.mybatis.mapper.UserWithOrdersMapper">
+
+    <resultMap id="UserWithOrdersMap" type="com.loveeleve.ecology.mybatis.model.UserWithOrders">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="email" property="email"/>
+        <collection property="orders" ofType="com.loveeleve.ecology.mybatis.model.UserOrder"
+                    select="selectOrdersByUserId" column="id"/>
+    </resultMap>
+
+    <select id="selectUserWithOrders" resultMap="UserWithOrdersMap">
+        SELECT id, username, email
+        FROM ecology_user
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectOrdersByUserId" resultType="com.loveeleve.ecology.mybatis.model.UserOrder">
+        SELECT order_id, user_id, amount, status
+        FROM t_order
+        WHERE user_id = #{id}
+        ORDER BY order_id
+    </select>
+</mapper>
