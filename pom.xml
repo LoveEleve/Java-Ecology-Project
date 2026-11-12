@@ -36,6 +36,8 @@
         <module>java-ecology-http-provider</module>
         <module>java-ecology-openfeign</module>
         <module>java-ecology-gateway</module>
+        <module>java-ecology-kafka</module>
+        <module>java-ecology-rocketmq</module>
     </modules>
 
     <properties>

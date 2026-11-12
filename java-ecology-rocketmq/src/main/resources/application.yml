@@ -1,0 +1,52 @@
+spring:
+  application:
+    name: java-ecology-rocketmq
+  datasource:
+    url: jdbc:h2:mem:ecology-rocketmq;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db/schema-h2.sql
+
+server:
+  port: 8098
+  shutdown: graceful
+
+rocketmq:
+  name-server: ${ROCKETMQ_NAME_SERVER:127.0.0.1:9876}
+  producer:
+    group: ecology-rocketmq-producer
+    send-message-timeout: 3000
+    retry-times-when-send-failed: 3
+    retry-times-when-send-async-failed: 3
+    retry-next-server: true
+    tls-enable: ${ROCKETMQ_TLS_ENABLE:false}
+    namespace: ${ROCKETMQ_NAMESPACE:}
+    compress-message-body-threshold: 4096
+    max-message-size: 4194304
+    access-key: ${ROCKETMQ_ACCESS_KEY:}
+    secret-key: ${ROCKETMQ_SECRET_KEY:}
+  consumer:
+    namespace: ${ROCKETMQ_NAMESPACE:}
+    tls-enable: ${ROCKETMQ_TLS_ENABLE:false}
+    pull-batch-size: 32
+    access-key: ${ROCKETMQ_ACCESS_KEY:}
+    secret-key: ${ROCKETMQ_SECRET_KEY:}
+
+app:
+  rocketmq:
+    consumer-group: ${ROCKETMQ_CONSUMER_GROUP:ecology-rocketmq-consumer}
+    ordered-group: ${ROCKETMQ_ORDERED_GROUP:ecology-rocketmq-ordered-consumer}
+    transaction-group: ${ROCKETMQ_TRANSACTION_GROUP:ecology-rocketmq-transaction-consumer}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: never

@@ -1,0 +1,67 @@
+spring:
+  application:
+    name: java-ecology-kafka
+  datasource:
+    url: jdbc:h2:mem:ecology-kafka;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db/schema-h2.sql
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:127.0.0.1:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      acks: all
+      retries: 2147483647
+      compression-type: lz4
+      properties:
+        enable.idempotence: true
+        max.in.flight.requests.per.connection: 5
+        linger.ms: 10
+        batch.size: 32768
+        delivery.timeout.ms: 120000
+        request.timeout.ms: 30000
+        max.block.ms: 60000
+    consumer:
+      group-id: ${KAFKA_CONSUMER_GROUP:ecology-kafka}
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      enable-auto-commit: false
+      auto-offset-reset: earliest
+      max-poll-records: 100
+      properties:
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring.json.trusted.packages: com.loveeleve.ecology.kafka.dto
+        max.poll.interval.ms: 300000
+        session.timeout.ms: 45000
+        heartbeat.interval.ms: 3000
+        fetch.min.bytes: 1
+        fetch.max.bytes: 52428800
+        max.partition.fetch.bytes: 1048576
+    listener:
+      ack-mode: manual_immediate
+      concurrency: 3
+      type: single
+
+server:
+  port: 8097
+  shutdown: graceful
+
+app:
+  kafka:
+    consumer-group: ${KAFKA_CONSUMER_GROUP:ecology-kafka}
+    dlt-group: ${KAFKA_DLT_GROUP:ecology-kafka-dlt}
+    batch-group: ${KAFKA_BATCH_GROUP:ecology-kafka-batch}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: never
