@@ -44,12 +44,14 @@ Java 生态的生产级使用案例集合，基于 Spring Boot 构建。目标�
 | `java-ecology-gateway` | Gateway：Nacos + LB、Sentinel 流控、Redis RateLimiter、CORS、TraceId | ✅ |
 | `java-ecology-kafka` | Kafka：幂等 Producer、批量消费、手动 ack、DB 幂等、重试、DLT | ✅ |
 | `java-ecology-rocketmq` | RocketMQ：同步/异步/单向/批量/延迟/顺序/事务消息、并发、幂等、DLQ | ✅ |
+| `java-ecology-canal` | Canal：MySQL binlog 订阅、RowChange 解析、ack/rollback、重连、Single/Cluster | ✅ |
+| `java-ecology-sofa-jraft` | Sofa-Jraft：3 节点 Raft、Leader 选举、KV 复制、快照、线性一致读写 | ✅ |
 | `java-ecology-sentinel` | Sentinel：流控、熔断、热点参数、系统/授权规则、注解降级、Nacos 动态规则 | ✅ |
 | `java-ecology-seata` | Seata AT：Order/Account/Storage 三服务、全局事务、XID 透传、幂等、undo_log、Nacos 集群配置 | ✅ |
 | `java-ecology-observability` | 可观测性：Micrometer/Prometheus、OpenTelemetry Tracing、TraceId 日志、Health/Info | ✅ |
 | `java-ecology-netty` | Netty：TCP Server/Client、长度字段拆包、心跳、背压、重连、优雅停机 | ✅ |
 | `java-ecology-grpc` | gRPC：Proto、Unary/三种流、deadline、metadata、retry、health、reflection | ✅ |
-| 后续核心模块 | Canal、分布式 ID、Sofa-Jraft、XXL-Job、SkyWalking、Arthas、Spring Cloud Alibaba 集成、LoadBalancer | ⏳ |
+| 后续核心模块 | 分布式 ID、XXL-Job、SkyWalking、Arthas、Spring Cloud Alibaba 集成、LoadBalancer | ⏳ |
 
 ## 构建与运行
 
@@ -113,6 +115,8 @@ java -jar java-ecology-spring-boot-web/target/java-ecology-spring-boot-web.jar -
 | Gateway + Nacos/LB + Sentinel + Redis 限流 | ✅ | ✅ Nacos + Redis + Provider 手工验证 | 自动化只测上下文 |
 | Kafka Producer/Consumer/Batch/DB 幂等/DLT | ✅ | ✅ Embedded Kafka | 未接真实集群 |
 | RocketMQ 同步/异步/延迟/顺序/事务 | ✅ | ✅ 12 个单测（无 Broker） | 未接真实 Broker |
+| Canal binlog 解析/ack/rollback | ✅ | ✅ 5 个测试（无 Canal Server） | 未接真实 MySQL/Canal |
+| Sofa-Jraft 3 节点/Leader/KV 复制 | ✅ | ✅ 2 个测试（本机 3 节点） | 未做多机/网络分区 |
 | Sentinel 流控/熔断/热点/系统/授权 | ✅ | ✅ 16 个单测（无 Dashboard/Nacos） | 未接真实规则中心 |
 | Seata AT 全局事务/三服务/幂等/undo_log | ✅ | ✅ 26 个单测/上下文（无 TC/Nacos/MySQL） | 未接真实 TC/MySQL |
 | Observability 指标/Tracing/Health | ✅ | ✅ 4 个测试（无 Collector/Prometheus） | 未接真实监控后端 |
@@ -147,4 +151,4 @@ java -jar java-ecology-spring-boot-web/target/java-ecology-spring-boot-web.jar -
 
 ## 说明
 
-当前已完成基础 Web、数据访问、连接池、ORM 增强、多数据源、Redis、Redisson、Nacos、ShardingSphere-JDBC、Dubbo、Lucene、Elasticsearch、OpenFeign、Gateway、Kafka、RocketMQ、Sentinel、Seata、Observability、Netty 和 gRPC 模块，并完整 vendoring 了 Poly 项目；核心路线仍缺 Canal、分布式 ID、Sofa-Jraft、XXL-Job、SkyWalking、Arthas、Spring Cloud Alibaba 集成和独立 LoadBalancer 模块。
+当前已完成基础 Web、数据访问、连接池、ORM 增强、多数据源、Redis、Redisson、Nacos、ShardingSphere-JDBC、Dubbo、Lucene、Elasticsearch、OpenFeign、Gateway、Kafka、RocketMQ、Canal、Sofa-Jraft、Sentinel、Seata、Observability、Netty 和 gRPC 模块，并完整 vendoring 了 Poly 项目；核心路线仍缺分布式 ID、XXL-Job、SkyWalking、Arthas、Spring Cloud Alibaba 集成和独立 LoadBalancer 模块。

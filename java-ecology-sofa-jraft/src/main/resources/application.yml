@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: java-ecology-sofa-jraft
+server:
+  port: 8111
+  shutdown: graceful
+app:
+  jraft:
+    enabled: ${JRAFT_ENABLED:false}
+    group-id: ${JRAFT_GROUP_ID:ecology-kv}
+    node-id: ${JRAFT_NODE_ID:127.0.0.1:19991}
+    peers: ${JRAFT_PEERS:127.0.0.1:19991}
+    data-path: ${JRAFT_DATA_PATH:/tmp/ecology-jraft}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: never
