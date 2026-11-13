@@ -40,11 +40,16 @@
         <module>java-ecology-rocketmq</module>
         <module>java-ecology-canal</module>
         <module>java-ecology-sofa-jraft</module>
+        <module>java-ecology-xxl-job</module>
+        <module>java-ecology-skywalking</module>
+        <module>java-ecology-arthas</module>
+        <module>java-ecology-sca-integration</module>
         <module>java-ecology-sentinel</module>
         <module>java-ecology-seata</module>
         <module>java-ecology-observability</module>
         <module>java-ecology-netty</module>
         <module>java-ecology-grpc</module>
+        <module>java-ecology-budget</module>
     </modules>
 
     <properties>

@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: ${SW_AGENT_NAME:java-ecology-skywalking}
+server:
+  port: 8113
+  shutdown: graceful
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: never

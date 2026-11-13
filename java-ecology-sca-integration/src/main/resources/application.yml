@@ -1,0 +1,56 @@
+spring:
+  application:
+    name: java-ecology-sca-integration
+  cloud:
+    nacos:
+      discovery:
+        enabled: ${NACOS_DISCOVERY_ENABLED:false}
+        server-addr: ${NACOS_SERVER:127.0.0.1:8848}
+        namespace: ${NACOS_NAMESPACE:}
+        group: ${NACOS_GROUP:DEFAULT_GROUP}
+        username: ${NACOS_USERNAME:}
+        password: ${NACOS_PASSWORD:}
+    gateway:
+      routes:
+        - id: seata-order
+          uri: lb://seata-order-service
+          predicates:
+            - Path=/api/sca/orders/**
+          filters:
+            - RewritePath=/api/sca/orders(?<segment>/?.*), /api/orders${segment}
+            - name: Retry
+              args:
+                retries: 1
+                methods: GET
+                statuses: BAD_GATEWAY,SERVICE_UNAVAILABLE,GATEWAY_TIMEOUT
+        - id: http-provider
+          uri: lb://ecology-http-provider
+          predicates:
+            - Path=/api/sca/provider/**
+          filters:
+            - RewritePath=/api/sca/provider(?<segment>/?.*), /api/downstream${segment}
+            - name: Retry
+              args:
+                retries: 1
+                methods: GET
+                statuses: BAD_GATEWAY,SERVICE_UNAVAILABLE,GATEWAY_TIMEOUT
+      httpclient:
+        connect-timeout: 1000
+        response-timeout: 5s
+    loadbalancer:
+      cache:
+        ttl: 35s
+        capacity: 256
+
+server:
+  port: 8115
+  shutdown: graceful
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,gateway
+  endpoint:
+    health:
+      show-details: never

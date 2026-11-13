@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: java-ecology-arthas
+  arthas:
+    enabled: ${ARTHAS_ENABLED:false}
+arthas:
+  app-name: ${ARTHAS_APP_NAME:java-ecology-arthas}
+  ip: ${ARTHAS_IP:127.0.0.1}
+  telnet-port: ${ARTHAS_TELNET_PORT:3658}
+  http-port: ${ARTHAS_HTTP_PORT:8563}
+  username: ${ARTHAS_USERNAME:}
+  password: ${ARTHAS_PASSWORD:}
+  home: ${ARTHAS_HOME:}
+  tunnel-server: ${ARTHAS_TUNNEL_SERVER:}
+  agent-id: ${ARTHAS_AGENT_ID:}
+  session-timeout: ${ARTHAS_SESSION_TIMEOUT:1800}
+  disabled-commands: stop
+server:
+  port: 8114
+  shutdown: graceful
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: never

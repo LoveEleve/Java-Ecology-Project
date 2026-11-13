@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: java-ecology-xxl-job
+server:
+  port: 8112
+  shutdown: graceful
+app:
+  xxl-job:
+    enabled: ${XXL_JOB_ENABLED:false}
+    admin-addresses: ${XXL_JOB_ADMIN_ADDRESSES:http://127.0.0.1:8080/xxl-job-admin}
+    access-token: ${XXL_JOB_ACCESS_TOKEN:default_token}
+    appname: ${XXL_JOB_APPNAME:java-ecology-xxl-job-executor}
+    address: ${XXL_JOB_ADDRESS:}
+    ip: ${XXL_JOB_IP:}
+    port: ${XXL_JOB_PORT:9999}
+    log-path: ${XXL_JOB_LOG_PATH:./logs/xxl-job}
+    log-retention-days: 30
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: never
