@@ -1,0 +1,1 @@
+consumerTraceFilter=com.loveeleve.ecology.dubbo.consumer.filter.ConsumerTraceFilter

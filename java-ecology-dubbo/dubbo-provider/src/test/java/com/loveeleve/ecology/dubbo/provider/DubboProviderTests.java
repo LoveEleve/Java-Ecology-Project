@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.Duration;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -20,7 +22,8 @@ class DubboProviderTests {
         assertThat(orderService.get(1).getAmount()).isEqualTo(100);
         assertThat(orderService.ping("dubbo")).isEqualTo("pong:dubbo");
         assertThat(orderService.createAsync(new OrderRequest(2, 1, 200)))
-                .isCompletedWithValueMatching(order -> order.getOrderId() == 2);
+                .succeedsWithin(Duration.ofSeconds(2))
+                .matches(order -> order.getOrderId() == 2);
         assertThat(orderService.echoAttachment()).isEqualTo("missing");
     }
 }

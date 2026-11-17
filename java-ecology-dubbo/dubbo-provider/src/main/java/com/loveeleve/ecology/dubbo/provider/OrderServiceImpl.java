@@ -5,6 +5,8 @@ import com.loveeleve.ecology.dubbo.api.OrderService;
 import com.loveeleve.ecology.dubbo.api.OrderView;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.apache.dubbo.rpc.RpcContext;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.task.TaskExecutor;
 
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -21,6 +23,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class OrderServiceImpl implements OrderService {
 
     private final Map<Long, OrderView> orders = new ConcurrentHashMap<>();
+    private final TaskExecutor orderExecutor;
+
+    public OrderServiceImpl(@Qualifier("orderExecutor") TaskExecutor orderExecutor) {
+        this.orderExecutor = orderExecutor;
+    }
 
     @Override
     public OrderView create(OrderRequest request) {
@@ -42,7 +49,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public CompletableFuture<OrderView> createAsync(OrderRequest request) {
-        return CompletableFuture.completedFuture(create(request));
+        return CompletableFuture.supplyAsync(() -> create(request), orderExecutor);
     }
 
     @Override

@@ -20,6 +20,7 @@ dubbo:
     check: false
     timeout: 3000
     retries: 2
+    filter: consumerTraceFilter
 
 management:
   endpoints:

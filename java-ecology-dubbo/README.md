@@ -35,16 +35,25 @@ Callback、Mock 和其他高级治理能力暂时不展开，避免把核心 Pro
 java-ecology-dubbo
 ├─ pom.xml                 聚合 POM
 ├─ dubbo-api/              接口 + DTO，无 Spring 依赖
-│  └─ src/main/java/.../api/OrderService.java
+│  ├─ OrderService.java
+│  ├─ SlowOrderService.java
+│  ├─ InstanceService.java
+│  └─ OrderRequest.java / OrderView.java
 ├─ dubbo-provider/         Provider 应用，端口 8090
 │  ├─ ProviderApplication.java
 │  ├─ provider/OrderServiceImpl.java
+│  ├─ provider/SlowOrderServiceImpl.java
+│  ├─ provider/InstanceServiceImpl.java
+│  ├─ provider/AsyncConfig.java
 │  ├─ filter/EcologyDubboFilter.java
 │  └─ resources/application*.yml
 ├─ dubbo-consumer/         Consumer 应用，端口 8091
 │  ├─ ConsumerApplication.java
 │  ├─ consumer/OrderConsumer.java
+│  ├─ consumer/SlowOrderConsumer.java
+│  ├─ consumer/InstanceConsumer.java
 │  ├─ consumer/GenericOrderInvoker.java
+│  ├─ consumer/filter/ConsumerTraceFilter.java
 │  ├─ controller/DubboController.java
 │  └─ resources/application*.yml
 └─ README.md
@@ -59,11 +68,14 @@ java-ecology-dubbo
 | Consumer | `@DubboReference OrderConsumer` | `dubbo-consumer/.../consumer/OrderConsumer.java` | Nacos 手工验证 |
 | 版本/分组 | `version=1.0.0, group=ecology` | Provider/Consumer 注解 | 配置检查 |
 | 超时/重试/容错 | `timeout=3000, retries=2, failover` | 注解 + `application.yml` | 配置检查 |
+| 多实例/负载均衡 | `InstanceService.instance()` + `roundrobin` | API、Provider、Consumer | 两个 Provider + curl |
+| 超时/快速失败 | `SlowOrderService` + `timeout=500, retries=0` | API、Provider、Consumer | `/api/dubbo/slow` |
 | 泛化调用 | `GenericOrderInvoker` | `dubbo-consumer/.../consumer/GenericOrderInvoker.java` | Nacos 手工验证 |
-| 异步调用 | `OrderService.createAsync` | `dubbo-api`、Provider、Consumer | Provider 测试 + Nacos 手工验证 |
+| 异步调用 | `OrderService.createAsync` + `orderExecutor` | API、Provider、Consumer | Provider 测试 + Nacos 手工验证 |
 | Attachment | `echoAttachment` | Provider/Consumer | Nacos 手工验证 |
 | 参数校验 | `OrderRequest` + `validation=true` | `OrderRequest.java`、Provider 注解 | Provider 测试（合法参数） |
-| 自定义 Filter | `EcologyDubboFilter` | `dubbo-provider/.../filter/`、`META-INF/dubbo/...Filter` | 代码/配置 |
+| Provider Filter | `EcologyDubboFilter` | `dubbo-provider/.../filter/`、`META-INF/dubbo/...Filter` | 代码/配置 |
+| Consumer Filter | `ConsumerTraceFilter` | `dubbo-consumer/.../filter/`、`META-INF/dubbo/...Filter` | 代码/配置 |
 | 序列化白名单 | `security/serialize.allowlist` | Provider/Consumer resources | DTO 白名单 |
 
 ## 接口清单
@@ -75,6 +87,8 @@ Consumer 应用（8091）：
 | POST | `/api/dubbo/orders` | 调用 Provider 创建订单 |
 | GET | `/api/dubbo/orders/{orderId}` | 调用 Provider 查询订单 |
 | GET | `/api/dubbo/ping?message=` | 普通 RPC |
+| GET | `/api/dubbo/instance` | 返回当前 Provider 实例端口 |
+| GET | `/api/dubbo/slow?message=&delayMs=` | 超时/快速失败示例 |
 | GET | `/api/dubbo/generic/ping?message=` | 泛化调用 |
 | POST | `/api/dubbo/async/orders` | 异步调用 |
 | GET | `/api/dubbo/attachment` | Attachment 透传 |
@@ -143,11 +157,16 @@ export JAVA_HOME=/env/javaEnv/jdk17
 # 编译 API + Provider + Consumer
 ./mvnw -pl :dubbo-provider,:dubbo-consumer -am package
 
-# 先启动 Provider（8090）
+# Provider A（默认 8090，Dubbo 20880）
 java -jar java-ecology-dubbo/dubbo-provider/target/dubbo-provider.jar \
   --spring.profiles.active=nacos
 
-# 再启动 Consumer（8091）
+# Provider B（HTTP 8092，Dubbo 20881）
+SERVER_PORT=8092 DUBBO_PROVIDER_PORT=20881 \
+java -jar java-ecology-dubbo/dubbo-provider/target/dubbo-provider.jar \
+  --spring.profiles.active=nacos
+
+# Consumer（8091）
 java -jar java-ecology-dubbo/dubbo-consumer/target/dubbo-consumer.jar \
   --spring.profiles.active=nacos
 ```
@@ -172,6 +191,12 @@ curl -s -X POST http://localhost:8091/api/dubbo/async/orders \
   -H 'Content-Type: application/json' \
   -d '{"orderId":2,"userId":1,"amount":200}'
 
+# 多实例轮询：多次调用观察 8090/8092
+for i in 1 2 3 4; do curl -s http://localhost:8091/api/dubbo/instance; echo; done
+
+# 超时/快速失败：Provider sleep 1000ms，消费者只等 500ms
+curl -s 'http://localhost:8091/api/dubbo/slow?message=timeout&delayMs=1000' || true
+
 # Attachment
 curl -s http://localhost:8091/api/dubbo/attachment
 ```
@@ -188,6 +213,7 @@ Consumer 启动后等待几秒再调用，给 Nacos 服务发现留传播时间�
 - **泛化调用要限制入口**：泛化入口等于远程方法调用面，必须鉴权、白名单、参数校验。
 - **Parameter validation**：Provider 已开启 `validation=true`，需要 `spring-boot-starter-validation`；生产要统一异常映射。
 - **Filter 要轻量**：自定义 Filter 在 RPC 线程上执行，不能阻塞或做重 IO。
+- **慢接口只用于演示**：`SlowOrderService.slowPing` 不应出现在生产 API；它只用于验证 timeout/failfast。
 - **注册中心不是健康检查**：Nacos 有实例不代表业务健康；配合 Actuator/就绪探针/网关摘流。
 - **Nacos 鉴权/集群**：本模块只用 standalone 验证，生产要补鉴权、namespace 和集群。
 
